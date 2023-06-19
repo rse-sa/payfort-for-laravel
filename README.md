@@ -20,7 +20,7 @@ Currently, it supports only Laravel 9.
 ## Installation
 You need to run this command
 ```bash
-composer require tamkeen-tech/laravel-payfort
+composer require renewablesys/payfort-for-laravel
 ```
 To publish the configurations please run this command
 ```bash
@@ -115,7 +115,7 @@ Payfort::processResponse(
     [] # the response array
 );
 ```
-it will throw exception `\TamkeenTech\Payfort\Exceptions\PaymentFailed`, if the response is not valid.
+it will throw exception `\RSE\PayfortForLaravel\Exceptions\PaymentFailed`, if the response is not valid.
 
 if the transaction is done successfully you can get the transaction fort id by using this:
 ```php
@@ -167,7 +167,7 @@ you can use this method `setMerchantExtra` before any command you want, and you 
 
 
 ## Logging
-To log your requests with payfort you can listen to this event `\TamkeenTech\Payfort\Events\PayfortMessageLog` it will contain the data sent and the resposne
+To log your requests with payfort you can listen to this event `\RSE\PayfortForLaravel\Events\PayfortMessageLog` it will contain the data sent and the resposne
 
 This is an example on how it can be used:
 ```php
