@@ -1,7 +1,12 @@
-<?php /** @noinspection PhpUnused */
+<?php
+/** @noinspection PhpUnused */
 
 namespace RSE\PayfortForLaravel;
 
+use Exception;
+use RSE\PayfortForLaravel\Events\PaymentFailed;
+use RSE\PayfortForLaravel\Events\PaymentSuccess;
+use RSE\PayfortForLaravel\Facades\Payfort;
 use RSE\PayfortForLaravel\Services\AuthorizePurchaseService;
 use RSE\PayfortForLaravel\Services\CaptureService;
 use RSE\PayfortForLaravel\Services\CheckStatusService;
@@ -16,6 +21,8 @@ class PayfortIntegration
     protected array $merchant = [];
 
     protected array $merchant_extras = [];
+
+    protected bool $throw_on_error = true;
 
     public function __construct()
     {
@@ -36,7 +43,7 @@ class PayfortIntegration
     {
         for ($i = 1; $i <= 5; $i++) {
             if (! empty(${'extra' . $i}) && ! is_array(${'extra' . $i})) {
-                array_push($this->merchant_extras, ${'extra' . $i});
+                $this->merchant_extras[] = ${'extra' . $i};
             }
         }
 
@@ -57,12 +64,20 @@ class PayfortIntegration
         return $this;
     }
 
+    public function throwOnError(bool $value): self
+    {
+        $this->throw_on_error = $value;
+
+        return $this;
+    }
+
     /**
-     * @throws \Exception
+     * @throws \Exception|\Throwable
      */
     public function refund($fort_id, $amount)
     {
         return app(RefundService::class)
+            ->throwOnError($this->throw_on_error)
             ->setMerchant($this->merchant)
             ->setMerchantExtras($this->merchant_extras)
             ->setFortId($fort_id)
@@ -71,11 +86,12 @@ class PayfortIntegration
     }
 
     /**
-     * @throws \Exception
+     * @throws \Exception|\Throwable
      */
     public function void($fort_id)
     {
         return app(VoidService::class)
+            ->throwOnError($this->throw_on_error)
             ->setMerchant($this->merchant)
             ->setMerchantExtras($this->merchant_extras)
             ->setFortId($fort_id)
@@ -83,19 +99,39 @@ class PayfortIntegration
     }
 
     /**
-     * @throws \Exception
+     * @throws \Exception|\Throwable
      */
-    public function checkStatus($fort_id)
+    public function checkStatus($fort_id): array
     {
         return app(CheckStatusService::class)
+            ->throwOnError($this->throw_on_error)
             ->setMerchant($this->merchant)
             ->setFortId($fort_id)
             ->handle();
     }
 
-    /**
-     * @throws \Exception
-     */
+    public function validateStatus(array|string $data): ?array
+    {
+        try {
+            // Validate Response Body
+            if (is_array($data)) {
+                Payfort::processResponse($data);
+            }
+
+            // Check Status Online
+            $fortId = is_array($data) ? $data['fort_id'] : $data;
+
+            $status = Payfort::checkStatus($fortId);
+
+            event(new PaymentSuccess());
+
+            return $status;
+        } catch (Exception $exception) {
+            event(new PaymentFailed());
+            throw $exception;
+        }
+    }
+
     public function purchase(
         array $fort_params,
         float $amount,
@@ -105,6 +141,7 @@ class PayfortIntegration
     ): AuthorizePurchaseService {
         /** @var \RSE\PayfortForLaravel\Services\AuthorizePurchaseService */
         return app(AuthorizePurchaseService::class)
+            ->throwOnError($this->throw_on_error)
             ->setMerchant($this->merchant)
             ->setFortParams($fort_params)
             ->setInstallmentParams($installments_params)
@@ -116,7 +153,7 @@ class PayfortIntegration
     }
 
     /**
-     * @throws \Exception
+     * @throws \Exception|\Throwable
      */
     public function authorize(
         array $fort_params,
@@ -126,6 +163,7 @@ class PayfortIntegration
     ): AuthorizePurchaseService {
         /** @var \RSE\PayfortForLaravel\Services\AuthorizePurchaseService */
         return app(AuthorizePurchaseService::class)
+            ->throwOnError($this->throw_on_error)
             ->setAuthorizationCommand()
             ->setMerchant($this->merchant)
             ->setFortParams($fort_params)
@@ -142,17 +180,20 @@ class PayfortIntegration
      *
      * @param float  $amount
      * @param string $redirect_url
-     * @param bool   $form_flag
+     * @param int    $form_flag
      * @return array
-     * @throws \Exception
+     * @throws \Exception|\Throwable
      */
     public function tokenization(
         float $amount,
         string $redirect_url,
-        bool $form_flag = true
+        int $form_flag = TokenizationService::FORM_IFRAME,
+        ?string $merchant_reference = null,
     ): array {
         return app(TokenizationService::class)
+            ->throwOnError($this->throw_on_error)
             ->setMerchant($this->merchant)
+            ->setMerchantReference($merchant_reference)
             ->setAmount($amount)
             ->setMerchantExtras($this->merchant_extras)
             ->setRedirectUrl($redirect_url)
@@ -166,6 +207,7 @@ class PayfortIntegration
     public function processResponse(array $fort_params)
     {
         return app(ProcessResponseService::class)
+            ->throwOnError($this->throw_on_error)
             ->setMerchant($this->merchant)
             ->setMerchantExtras($this->merchant_extras)
             ->setFortParams($fort_params)
@@ -173,21 +215,23 @@ class PayfortIntegration
     }
 
     /**
-     * @throws \Exception
+     * @throws \Exception|\Throwable
      */
     public function getInstallmentsPlans()
     {
         return app(GetInstallmentsPlansService::class)
+            ->throwOnError($this->throw_on_error)
             ->setMerchant($this->merchant)
             ->handle();
     }
 
     /**
-     * @throws \Exception
+     * @throws \Exception|\Throwable
      */
     public function capture(string $fort_id, $amount)
     {
         return app(CaptureService::class)
+            ->throwOnError($this->throw_on_error)
             ->setMerchant($this->merchant)
             ->setMerchantExtras($this->merchant_extras)
             ->setFortId($fort_id)

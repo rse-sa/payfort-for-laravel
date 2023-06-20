@@ -11,11 +11,11 @@ return [
         'default' => [
             'merchant_identifier' => env('PAYFORT_MERCHANT_IDENTIFIER'),
 
-            'access_code' => env('PAYFORT_ACESS_CODE'),
+            'access_code' => env('PAYFORT_ACCESS_CODE'),
 
-            'SHA_request_phrase' => env('PAYFORT_SHAR_REQUEST_PHARSE'),
+            'SHA_request_phrase' => env('PAYFORT_SHA_REQUEST_PHRASE'),
 
-            'SHA_response_phrase' => env('PAYFORT_SHAR_RESPONSE_PHRASE'),
+            'SHA_response_phrase' => env('PAYFORT_SHA_RESPONSE_PHRASE'),
         ],
     ],
 

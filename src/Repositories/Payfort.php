@@ -31,7 +31,11 @@ abstract class Payfort
 
     public string $currency = 'SAR';
 
+    public ?string $merchant_reference = null;
+
     public float $amount;
+
+    protected bool $throwOnError = false;
 
     public function __construct()
     {
@@ -46,6 +50,26 @@ abstract class Payfort
             'https://sbpaymentservices.payfort.com/FortAPI/paymentApi' :
             'https://paymentservices.payfort.com/FortAPI/paymentApi';
     }
+
+    public function setMerchantReference(string $reference): static
+    {
+        $this->merchant_reference = $reference;
+
+        return $this;
+    }
+
+    public function throwOnError(bool $value): static
+    {
+        $this->throwOnError = $value;
+
+        return $this;
+    }
+
+    protected function getMerchantReference(): ?string
+    {
+        return $this->merchant_reference ?? $this->generateMerchantReference();
+    }
+
 
     protected function generateMerchantReference(): string
     {

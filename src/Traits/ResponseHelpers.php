@@ -2,37 +2,53 @@
 
 namespace RSE\PayfortForLaravel\Traits;
 
-use RSE\PayfortForLaravel\Exceptions\PaymentFailed;
-
 /**
  * response code
  */
 trait ResponseHelpers
 {
-    /**
-     * @throws \RSE\PayfortForLaravel\Exceptions\PaymentFailed
-     */
-    protected function validateResponseCode(): self
+    public function getResponseFortId(): ?string
     {
-        if (substr($this->fort_params['response_code'], 2) != '000') {
-            extract($this->fort_params);
-
-            $code = $this->fort_params['acquirer_response_code'] ?? $this->fort_params['response_code'];
-            $message = "{$this->fort_params['response_code']} - {$this->fort_params['response_message']}";
-
-            throw new PaymentFailed($message, (string) $code);
-        }
-
-        return $this;
+        return $this->fort_params['fort_id'] ?? null;
     }
 
-    public function getResponseFortId(): string
+    public function getResponsePaymentMethod(): ?string
     {
-        return $this->fort_params['fort_id'];
+        return $this->fort_params['payment_option'] ?? null;
     }
 
-    public function getResponsePaymentMethod(): string
+    public function getResponseCode(): string
     {
-        return $this->fort_params['payment_option'];
+        return $this->fort_params['acquirer_response_code'] ?? $this->fort_params['response_code'];
+    }
+
+    public function isResponseSuccessful(): bool
+    {
+        return $this->getResponseMessageStatusCode() == '000';
+    }
+
+    public function getResponseStatusCode(): string
+    {
+        return substr($this->getResponseCode(), 0, 2);
+    }
+
+    public function getResponseMessageStatusCode(): string
+    {
+        return substr($this->getResponseCode(), 2);
+    }
+
+    public function getResponseMessage(): string
+    {
+        return $this->fort_params['response_message'];
+    }
+
+    public function getMerchantReference(): ?string
+    {
+        return $this->fort_params['merchant_reference'] ?? null;
+    }
+
+    public function getResponse(): array
+    {
+        return $this->fort_params;
     }
 }

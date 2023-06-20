@@ -4,11 +4,14 @@ namespace RSE\PayfortForLaravel\Services;
 
 use RSE\PayfortForLaravel\Exceptions\PaymentFailed;
 use RSE\PayfortForLaravel\Repositories\Payfort;
+use RSE\PayfortForLaravel\Traits\ResponseHelpers;
 
 class RefundService extends Payfort
 {
+    use ResponseHelpers;
+
     /**
-     * @throws \Exception|\Throwable
+     * @throws PaymentFailed
      */
     public function handle(): self
     {
@@ -30,20 +33,19 @@ class RefundService extends Payfort
         // calculating signature
         $request['signature'] = $this->calculateSignature($request);
 
-        $this->response = $response = $this->callApi($request, $this->getOperationUrl());
+        $this->response = $this->callApi($request, $this->getOperationUrl());
 
-        throw_unless(
-            $this->isSuccessful($response['response_code']),
-            new PaymentFailed($response['response_code'].' - '.$response['response_message'])
-        );
+        if (! $this->isSuccessful($this->response['response_code'])) {
+            throw (new PaymentFailed($this->response['response_code'] . " - " . $this->response['response_message']))
+                ->setResponse($this->response);
+        }
 
         return $this;
     }
 
     private function isSuccessful($response_code): bool
     {
-        return (str_starts_with($response_code, '06') &&
-                substr($response_code, 2) === '000') || (substr($response_code, 0, 2) === '00' &&
-                substr($response_code, 2) === '773');
+        return (str_starts_with($response_code, '06') && substr($response_code, 2) === '000')
+            || (str_starts_with($response_code, '00') && substr($response_code, 2) === '773');
     }
 }

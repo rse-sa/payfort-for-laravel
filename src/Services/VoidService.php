@@ -4,11 +4,14 @@ namespace RSE\PayfortForLaravel\Services;
 
 use RSE\PayfortForLaravel\Exceptions\PaymentFailed;
 use RSE\PayfortForLaravel\Repositories\Payfort;
+use RSE\PayfortForLaravel\Traits\ResponseHelpers;
 
 class VoidService extends Payfort
 {
+    use ResponseHelpers;
+
     /**
-     * @throws \Exception|\Throwable
+     * @throws PaymentFailed
      */
     public function handle(): self
     {
@@ -26,11 +29,10 @@ class VoidService extends Payfort
 
         $this->response = $response = $this->callApi($request, $this->getOperationUrl());
 
-        throw_unless(
-            $this->isSuccessful($response['response_code']),
-            PaymentFailed::class,
-            "{$response['response_code']} - {$response['response_message']}"
-        );
+        if(! $this->isSuccessful($this->response['response_code'])){
+            throw (new PaymentFailed($this->response['response_code'] . " - " . $this->response['response_message']))
+                ->setResponse($response);
+        }
 
         return $this;
     }

@@ -7,11 +7,15 @@ use RSE\PayfortForLaravel\Repositories\Payfort;
 
 class TokenizationService extends Payfort
 {
+    const FORM_NONE = 0;
+    const FORM_EXTERNAL = 1;
+    const FORM_IFRAME = 2;
+
     protected bool $has_3ds;
 
-    protected string $payment_method;
+    protected ?string $payment_method = null;
 
-    protected bool $with_form = false;
+    protected bool $form_type = false;
 
     /**
      * @throws \Exception|\Throwable
@@ -22,7 +26,7 @@ class TokenizationService extends Payfort
             'service_command' => 'TOKENIZATION',
             'merchant_identifier' => $this->merchant['merchant_identifier'],
             'access_code' => $this->merchant['access_code'],
-            'merchant_reference' => $this->generateMerchantReference(),
+            'merchant_reference' => $this->getMerchantReference(),
             'language' => $this->language,
             'return_url' => $this->redirect_url,
         ];
@@ -43,7 +47,7 @@ class TokenizationService extends Payfort
             'paymentMethod' => 'cc_merchantpage2',
         ];
 
-        if ($this->with_form) {
+        if ($this->form_type > 0) {
             $result['form'] = $this->getPaymentForm($this->getGatewayUrl(), $params);
         }
 
@@ -73,22 +77,27 @@ class TokenizationService extends Payfort
 
     public function getPaymentForm($gatewayUrl, $postData): string
     {
-        $form = '<form style="display:none" name="payfort_payment_form"'
-            .' id="payfort_payment_form" method="post" action="'
-            .$gatewayUrl.'">';
+        $form = '<form style="display:none" name="payfort_payment_form" id="payfort_payment_form" method="post" action="' . $gatewayUrl . '" '
+            . ($this->form_type == self::FORM_IFRAME ? "target='payfortFrame'" : "") .'>';
 
         foreach ($postData as $k => $v) {
-            $form .= '<input type="hidden" name="'.$k.'" value="'.$v.'">';
+            $form .= '<input type="hidden" name="' . $k . '" value="' . $v . '">';
         }
 
-        $form .= '<input type="submit" id="submit">';
+        $form .= '<input type="submit" id="submit_btn" value="ready to pay">';
+
+        $form .= '</form>';
+
+        if($this->form_type == self::FORM_EXTERNAL || $this->form_type == self::FORM_IFRAME){
+            $form .= "<script>document.forms['payfort_payment_form'].submit();</script>";
+        }
 
         return $form;
     }
 
-    public function withForm(bool $flag): self
+    public function withForm(int $flag): self
     {
-        $this->with_form = $flag;
+        $this->form_type = $flag;
 
         return $this;
     }

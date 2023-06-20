@@ -3,6 +3,7 @@
 namespace RSE\PayfortForLaravel\Traits;
 
 use RSE\PayfortForLaravel\Exceptions\PaymentFailed;
+use RSE\PayfortForLaravel\Exceptions\RequestFailed;
 
 /**
  * fort params
@@ -17,13 +18,13 @@ trait FortParams
     }
 
     /**
-     * @throws \RSE\PayfortForLaravel\Exceptions\PaymentFailed
+     * @throws \RSE\PayfortForLaravel\Exceptions\RequestFailed
      */
     private function validateFortParams(): self
     {
         if (count($this->fort_params) === 0) {
             $msg = "Invalid Response Parameters";
-            throw new PaymentFailed($msg);
+            throw new RequestFailed($msg);
         }
 
         return $this;

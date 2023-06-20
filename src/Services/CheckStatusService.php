@@ -4,11 +4,14 @@ namespace RSE\PayfortForLaravel\Services;
 
 use RSE\PayfortForLaravel\Exceptions\RequestFailed;
 use RSE\PayfortForLaravel\Repositories\Payfort;
+use RSE\PayfortForLaravel\Traits\ResponseHelpers;
 
 class CheckStatusService extends Payfort
 {
+    use ResponseHelpers;
+
     /**
-     * @throws \Exception|\Throwable
+     * @throws RequestFailed
      */
     public function handle(): array
     {
@@ -25,11 +28,9 @@ class CheckStatusService extends Payfort
 
         $this->response = $this->callApi($request, $this->getOperationUrl(), false);
 
-        throw_unless(
-            $this->isSuccessful($this->response['response_code']),
-            RequestFailed::class,
-            "{$this->response['response_code']} - {$this->response['response_message']}"
-        );
+        if (! $this->isSuccessful($this->response['response_code'])) {
+            throw new RequestFailed($this->response['response_code'] . " - " . $this->response['response_message']);
+        }
 
         return $this->response;
     }

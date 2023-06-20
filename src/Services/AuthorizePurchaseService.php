@@ -6,12 +6,13 @@ use Illuminate\Support\Facades\Validator;
 use RSE\PayfortForLaravel\Events\PayfortMessageLog;
 use RSE\PayfortForLaravel\Repositories\Payfort;
 use RSE\PayfortForLaravel\Traits\FortParams;
+use RSE\PayfortForLaravel\Traits\PaymentResponseHelpers;
 use RSE\PayfortForLaravel\Traits\ResponseHelpers;
 use RSE\PayfortForLaravel\Traits\Signature;
 
 class AuthorizePurchaseService extends Payfort
 {
-    use FortParams, ResponseHelpers, Signature;
+    use FortParams, ResponseHelpers, Signature, PaymentResponseHelpers;
 
     protected $fort_params = [];
 
@@ -31,8 +32,9 @@ class AuthorizePurchaseService extends Payfort
     protected array $insallments_params = [];
 
     /**
-     * @throws \Exception|\Throwable
+     * @throws \RSE\PayfortForLaravel\Exceptions\PaymentFailed|\RSE\PayfortForLaravel\Exceptions\RequestFailed
      */
+
     public function handle(): self
     {
         // check form params
@@ -43,7 +45,11 @@ class AuthorizePurchaseService extends Payfort
 
         $this->validateSignature();
 
-        $this->validateResponseCode();
+        $this->validatePaymentResponseCode();
+
+        if ($this->isPaymentFailed()) {
+            return $this;
+        }
 
         $request = [
             'command' => $this->command,
@@ -85,7 +91,7 @@ class AuthorizePurchaseService extends Payfort
             return $this;
         }
 
-        $this->validateResponseCode();
+        $this->validatePaymentResponseCode();
 
         return $this;
     }
@@ -130,8 +136,7 @@ class AuthorizePurchaseService extends Payfort
 
     private function set3DSRedirect(): static
     {
-        $response_code = $this->fort_params['response_code'];
-        if ($this->is3DsResponseCode($response_code) && isset($this->fort_params['3ds_url'])) {
+        if ($this->is3DsResponseCode($this->getResponseCode()) && isset($this->fort_params['3ds_url'])) {
             $this->redirect_3ds = true;
             $this->redirect_3ds_url = $this->fort_params['3ds_url'];
         }
