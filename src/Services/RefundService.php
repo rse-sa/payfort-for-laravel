@@ -4,6 +4,7 @@ namespace RSE\PayfortForLaravel\Services;
 
 use RSE\PayfortForLaravel\Exceptions\PaymentFailed;
 use RSE\PayfortForLaravel\Repositories\Payfort;
+use RSE\PayfortForLaravel\Repositories\RefundResponse;
 use RSE\PayfortForLaravel\Traits\ResponseHelpers;
 
 class RefundService extends Payfort
@@ -13,7 +14,7 @@ class RefundService extends Payfort
     /**
      * @throws PaymentFailed
      */
-    public function handle(): self
+    public function handle(): RefundResponse
     {
         $this->isTestingFortId($this->fort_id);
 
@@ -40,7 +41,7 @@ class RefundService extends Payfort
                 ->setResponse($this->response);
         }
 
-        return $this;
+        return RefundResponse::fromArray($this->response);
     }
 
     private function isSuccessful($response_code): bool

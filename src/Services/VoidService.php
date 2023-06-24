@@ -4,6 +4,7 @@ namespace RSE\PayfortForLaravel\Services;
 
 use RSE\PayfortForLaravel\Exceptions\PaymentFailed;
 use RSE\PayfortForLaravel\Repositories\Payfort;
+use RSE\PayfortForLaravel\Repositories\VoidResponse;
 use RSE\PayfortForLaravel\Traits\ResponseHelpers;
 
 class VoidService extends Payfort
@@ -13,7 +14,7 @@ class VoidService extends Payfort
     /**
      * @throws PaymentFailed
      */
-    public function handle(): self
+    public function handle(): VoidResponse
     {
         $request = [
             'command' => 'VOID_AUTHORIZATION',
@@ -34,7 +35,7 @@ class VoidService extends Payfort
                 ->setResponse($response);
         }
 
-        return $this;
+        return VoidResponse::fromArray($this->response);
     }
 
     private function isSuccessful($response_code): bool

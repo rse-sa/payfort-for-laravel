@@ -4,16 +4,20 @@ namespace RSE\PayfortForLaravel\Services;
 
 use RSE\PayfortForLaravel\Exceptions\RequestFailed;
 use RSE\PayfortForLaravel\Repositories\Payfort;
+use RSE\PayfortForLaravel\Repositories\StatusResponse;
+use RSE\PayfortForLaravel\Traits\PaymentResponseHelpers;
 use RSE\PayfortForLaravel\Traits\ResponseHelpers;
 
 class CheckStatusService extends Payfort
 {
     use ResponseHelpers;
 
+    protected $fort_params = [];
+
     /**
      * @throws RequestFailed
      */
-    public function handle(): array
+    public function handle(): StatusResponse
     {
         $request = [
             'query_command' => 'CHECK_STATUS',
@@ -28,11 +32,14 @@ class CheckStatusService extends Payfort
 
         $this->response = $this->callApi($request, $this->getOperationUrl(), false);
 
-        if (! $this->isSuccessful($this->response['response_code'])) {
-            throw new RequestFailed($this->response['response_code'] . " - " . $this->response['response_message']);
+        $this->fort_params = $this->response;
+
+        if (! $this->isSuccessful($this->getResponseCode())) {
+            throw (new RequestFailed($this->getResponseCode() . " - " . $this->getResponseMessage()))
+                ->setResponse($this->response);
         }
 
-        return $this->response;
+        return StatusResponse::fromArray($this->response);
     }
 
     private function isSuccessful($response_code): bool

@@ -12,11 +12,6 @@ trait ResponseHelpers
         return $this->fort_params['fort_id'] ?? null;
     }
 
-    public function getResponsePaymentMethod(): ?string
-    {
-        return $this->fort_params['payment_option'] ?? null;
-    }
-
     public function getResponseCode(): string
     {
         return $this->fort_params['acquirer_response_code'] ?? $this->fort_params['response_code'];
@@ -24,7 +19,7 @@ trait ResponseHelpers
 
     public function isResponseSuccessful(): bool
     {
-        return $this->getResponseMessageStatusCode() == '000';
+        return $this->getResponseMessageCode() == '000';
     }
 
     public function getResponseStatusCode(): string
@@ -32,7 +27,7 @@ trait ResponseHelpers
         return substr($this->getResponseCode(), 0, 2);
     }
 
-    public function getResponseMessageStatusCode(): string
+    public function getResponseMessageCode(): string
     {
         return substr($this->getResponseCode(), 2);
     }

@@ -17,6 +17,11 @@ trait FortParams
         return $this;
     }
 
+    public function getFortParams(): array
+    {
+        return $this->fort_params;
+    }
+
     /**
      * @throws \RSE\PayfortForLaravel\Exceptions\RequestFailed
      */
@@ -24,7 +29,9 @@ trait FortParams
     {
         if (count($this->fort_params) === 0) {
             $msg = "Invalid Response Parameters";
-            throw new RequestFailed($msg);
+            throw (new RequestFailed($msg))->setResponse([
+                'message' => $msg,
+            ]);
         }
 
         return $this;

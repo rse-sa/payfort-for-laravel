@@ -2,27 +2,8 @@
 
 namespace RSE\PayfortForLaravel\Repositories;
 
-class TokenPayload
+class TokenizationResponse
 {
-
-    /*
-     * {"response_code":"18000",
-     * "card_number":"****************",
-     * "card_holder_name":"*******",
-     * "signature":"",
-     * "merchant_identifier":"",
-     * "expiry_date":"****",
-     * "access_code":"",
-     * "language":"en",
-     * "service_command":"TOKENIZATION",
-     * "response_message":"Success",
-     * "merchant_reference":"-d723aa0a534f",
-     * "token_name":"aa88814a496b4292040c5966",
-     * "return_url":"http:",
-     * "card_bin":"40555",
-     * "status":"18"}
-     *
-     * */
     protected array $payload = [];
 
     public function __construct(array $data)

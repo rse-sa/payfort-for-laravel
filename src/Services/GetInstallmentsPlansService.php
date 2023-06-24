@@ -13,7 +13,7 @@ class GetInstallmentsPlansService extends Payfort
     /**
      * @throws \RSE\PayfortForLaravel\Exceptions\RequestFailed
      */
-    public function handle()
+    public function handle(): array
     {
         $request = [
             'query_command' => 'GET_INSTALLMENTS_PLANS',
@@ -28,7 +28,8 @@ class GetInstallmentsPlansService extends Payfort
         $this->response = $this->callApi($request, $this->getOperationUrl(), false);
 
         if (! $this->isSuccessful($this->response['response_code'])) {
-            throw new RequestFailed($this->response['response_code'] . " - " . $this->response['response_message']);
+            throw (new RequestFailed($this->response['response_code'] . " - " . $this->response['response_message']))
+                ->setResponse($this->response);
         }
 
         return $this->getInstallmentDetails();
@@ -39,7 +40,7 @@ class GetInstallmentsPlansService extends Payfort
         return str_starts_with($response_code, '62') && substr($response_code, 2) === '000';
     }
 
-    private function getInstallmentDetails()
+    private function getInstallmentDetails(): array
     {
         return $this->response['installment_detail'];
     }

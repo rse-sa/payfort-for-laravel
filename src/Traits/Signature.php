@@ -21,7 +21,7 @@ trait Signature
         if ($responseSignature !== $calculatedSignature) {
             $msg = "Invalid signature.";
 
-            throw (new RequestFailed($msg));
+            throw (new RequestFailed($msg))->setResponse($this->fort_params);
         }
 
         return $this;

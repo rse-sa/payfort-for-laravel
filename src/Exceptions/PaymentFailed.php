@@ -28,4 +28,19 @@ class PaymentFailed extends Exception
     {
         return $this->params;
     }
+
+    public function getResponseCode(): ?string
+    {
+        return $this->params['response_code'] ?? null;
+    }
+
+    public function getResponseMessage(): ?string
+    {
+        return $this->params['response_message'] ?? null;
+    }
+
+    public function getResponseCodeAndMessage(): string
+    {
+        return $this->getResponseCode() . ' :: ' . $this->getResponseMessage();
+    }
 }

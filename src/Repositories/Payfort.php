@@ -35,8 +35,6 @@ abstract class Payfort
 
     public float $amount;
 
-    protected bool $throwOnError = false;
-
     public function __construct()
     {
         $this->language = config('payfort.language');
@@ -51,16 +49,16 @@ abstract class Payfort
             'https://paymentservices.payfort.com/FortAPI/paymentApi';
     }
 
+    protected function getRedirectionMethodOperationUrl(): string
+    {
+        return $this->sandbox_mode ?
+            'https://sbcheckout.payfort.com/FortAPI/paymentPage' :
+            'https://checkout.payfort.com/FortAPI/paymentPage';
+    }
+
     public function setMerchantReference(string $reference): static
     {
         $this->merchant_reference = $reference;
-
-        return $this;
-    }
-
-    public function throwOnError(bool $value): static
-    {
-        $this->throwOnError = $value;
 
         return $this;
     }
@@ -70,10 +68,9 @@ abstract class Payfort
         return $this->merchant_reference ?? $this->generateMerchantReference();
     }
 
-
     protected function generateMerchantReference(): string
     {
-        return Str::uuid();
+        return Str::orderedUuid();
     }
 
     protected function getGatewayUrl(): string

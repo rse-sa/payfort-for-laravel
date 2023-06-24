@@ -4,12 +4,13 @@ namespace RSE\PayfortForLaravel\Services;
 
 use RSE\PayfortForLaravel\Events\PayfortMessageLog;
 use RSE\PayfortForLaravel\Repositories\Payfort;
+use RSE\PayfortForLaravel\Repositories\PurchaseResponse;
 use RSE\PayfortForLaravel\Traits\FortParams;
 use RSE\PayfortForLaravel\Traits\PaymentResponseHelpers;
 use RSE\PayfortForLaravel\Traits\ResponseHelpers;
 use RSE\PayfortForLaravel\Traits\Signature;
 
-class ProcessResponseService extends Payfort
+class ValidatePostResponse extends Payfort
 {
     use FortParams, ResponseHelpers, Signature, PaymentResponseHelpers;
 
@@ -18,7 +19,7 @@ class ProcessResponseService extends Payfort
     /**
      * @throws \RSE\PayfortForLaravel\Exceptions\PaymentFailed|\RSE\PayfortForLaravel\Exceptions\RequestFailed
      */
-    public function handle(): self
+    public function handle(): PurchaseResponse
     {
         $this->validateFortParams();
 
@@ -30,6 +31,6 @@ class ProcessResponseService extends Payfort
 
         $this->response = $this->fort_params;
 
-        return $this;
+        return PurchaseResponse::fromArray($this->response);
     }
 }

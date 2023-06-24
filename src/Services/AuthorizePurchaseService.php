@@ -5,6 +5,7 @@ namespace RSE\PayfortForLaravel\Services;
 use Illuminate\Support\Facades\Validator;
 use RSE\PayfortForLaravel\Events\PayfortMessageLog;
 use RSE\PayfortForLaravel\Repositories\Payfort;
+use RSE\PayfortForLaravel\Repositories\PurchaseResponse;
 use RSE\PayfortForLaravel\Traits\FortParams;
 use RSE\PayfortForLaravel\Traits\PaymentResponseHelpers;
 use RSE\PayfortForLaravel\Traits\ResponseHelpers;
@@ -15,10 +16,6 @@ class AuthorizePurchaseService extends Payfort
     use FortParams, ResponseHelpers, Signature, PaymentResponseHelpers;
 
     protected $fort_params = [];
-
-    protected bool $redirect_3ds = false;
-
-    protected string $redirect_3ds_url = "";
 
     protected string $command = "PURCHASE";
 
@@ -35,7 +32,7 @@ class AuthorizePurchaseService extends Payfort
      * @throws \RSE\PayfortForLaravel\Exceptions\PaymentFailed|\RSE\PayfortForLaravel\Exceptions\RequestFailed
      */
 
-    public function handle(): self
+    public function handle(): PurchaseResponse
     {
         // check form params
         $this->validateFortParams();
@@ -47,7 +44,7 @@ class AuthorizePurchaseService extends Payfort
 
         $this->validatePaymentResponseCode();
 
-        if ($this->isPaymentFailed()) {
+        if ($this->isActionFailed()) {
             return $this;
         }
 
@@ -85,15 +82,14 @@ class AuthorizePurchaseService extends Payfort
         $this->setFortParams($this->response);
         $this->validateFortParams();
         $this->validateSignature();
-        $this->set3DSRedirect();
 
-        if ($this->redirect_3ds && $this->redirect_3ds_url) {
-            return $this;
+        $response = PurchaseResponse::fromArray($this->response);
+
+        if (! $response->should3DsRedirect()) {
+            $this->validatePaymentResponseCode();
         }
 
-        $this->validatePaymentResponseCode();
-
-        return $this;
+        return $response;
     }
 
     public function setAuthorizationCommand(): self
@@ -101,16 +97,6 @@ class AuthorizePurchaseService extends Payfort
         $this->command = "AUTHORIZATION";
 
         return $this;
-    }
-
-    public function should3DsRedirect(): bool
-    {
-        return $this->redirect_3ds;
-    }
-
-    public function get3DsUri(): string
-    {
-        return $this->redirect_3ds_url;
     }
 
     public function setInstallmentParams(array $params = []): self
@@ -134,18 +120,4 @@ class AuthorizePurchaseService extends Payfort
         return $this;
     }
 
-    private function set3DSRedirect(): static
-    {
-        if ($this->is3DsResponseCode($this->getResponseCode()) && isset($this->fort_params['3ds_url'])) {
-            $this->redirect_3ds = true;
-            $this->redirect_3ds_url = $this->fort_params['3ds_url'];
-        }
-
-        return $this;
-    }
-
-    private function is3DsResponseCode($response_code): bool
-    {
-        return str_starts_with($response_code, '20') && substr($response_code, 2) === '064';
-    }
 }
