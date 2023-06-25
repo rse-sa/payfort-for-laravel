@@ -1,6 +1,6 @@
 {
     "name": "rse-sa/payfort-for-laravel",
-    "description": "Laravel-payfort is a package to process payments throught Payfort (amazon) payment gateway.",
+    "description": "Payfort-For-Laravel is a package to process payments throught Payfort (amazon) payment gateway.",
     "keywords": [
         "http",
         "payment",
