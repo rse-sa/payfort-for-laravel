@@ -118,34 +118,6 @@ class PayfortIntegration
     }
 
     /**
-     * @param array|string $data
-     * @return \RSE\PayfortForLaravel\Repositories\StatusResponse|null
-     * @throws \RSE\PayfortForLaravel\Exceptions\PaymentFailed
-     * @throws \RSE\PayfortForLaravel\Exceptions\RequestFailed
-     */
-    public function validateStatus(array|string $data): ?StatusResponse
-    {
-        try {
-            // Validate Response Body
-            if (is_array($data)) {
-                $this->validatePostResponse($data);
-            }
-
-            // Check Status Online
-            $fortId = is_array($data) ? $data['fort_id'] : $data;
-
-            $status = $this->checkStatus($fortId);
-
-            event(new PaymentSuccess());
-
-            return $status;
-        } catch (RequestFailed|Exceptions\PaymentFailed $exception) {
-            event(new PaymentFailed());
-            throw $exception;
-        }
-    }
-
-    /**
      * prepare tokenization params and return array
      * by default it will return a form params.
      *

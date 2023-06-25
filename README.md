@@ -222,7 +222,7 @@ use \RSE\PayfortForLaravel\Exceptions\PaymentFailed;
 use \RSE\PayfortForLaravel\Exceptions\RequestFailed;
 
 try{
-    $tokenization = Payfort::validateTokenizationResponse(request()->post());
+    $response = Payfort::validatePostResponse(request()->post());
 }catch (RequestFailed|PaymentFailed $requestFailed){
     // Handle Error
 }

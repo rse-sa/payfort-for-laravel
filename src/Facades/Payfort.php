@@ -29,7 +29,6 @@ use RSE\PayfortForLaravel\Services\TokenizationService;
  * @method static array                         redirectionMethod($amount, string $email, string $returnUrl, ?string $merchant_reference = null)
  * @method static PaymentLinkService            paymentLink($amount,string $email,Carbon $expiryDate,string $returnUrl,array $notificationType = ['EMAIL'],?string $merchant_reference = null)
  * @method static StatusResponse                checkStatus(string $fort_id)
- * @method static StatusResponse                validateStatus(array|string $data)
  * @method static PurchaseResponse              validatePostResponse(array $fort_params)
  * @method static TokenizationResponse          validateTokenizationResponse(array $fort_params)
  * @method static PurchaseResponse              validateResponseForRedirectionMethod(array $fort_params)
