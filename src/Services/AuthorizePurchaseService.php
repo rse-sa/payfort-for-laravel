@@ -8,12 +8,12 @@ use RSE\PayfortForLaravel\Repositories\Payfort;
 use RSE\PayfortForLaravel\Repositories\PurchaseResponse;
 use RSE\PayfortForLaravel\Traits\FortParams;
 use RSE\PayfortForLaravel\Traits\PaymentResponseHelpers;
-use RSE\PayfortForLaravel\Traits\ResponseHelpers;
+use RSE\PayfortForLaravel\Traits\ApiResponseHelpers;
 use RSE\PayfortForLaravel\Traits\Signature;
 
 class AuthorizePurchaseService extends Payfort
 {
-    use FortParams, ResponseHelpers, Signature, PaymentResponseHelpers;
+    use FortParams, ApiResponseHelpers, Signature, PaymentResponseHelpers;
 
     protected $fort_params = [];
 
@@ -43,10 +43,6 @@ class AuthorizePurchaseService extends Payfort
         $this->validateSignature();
 
         $this->validatePaymentResponseCode();
-
-        if ($this->isActionFailed()) {
-            return $this;
-        }
 
         $request = [
             'command' => $this->command,

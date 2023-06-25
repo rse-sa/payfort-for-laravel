@@ -2,8 +2,12 @@
 
 namespace RSE\PayfortForLaravel\Repositories;
 
+use RSE\PayfortForLaravel\Traits\RepositoryHelpers;
+
 class TokenizationResponse
 {
+    use RepositoryHelpers;
+
     protected array $payload = [];
 
     public function __construct(array $data)
@@ -18,27 +22,7 @@ class TokenizationResponse
 
     public function isSuccessful(): bool
     {
-        return $this->getStatus() == '18';
-    }
-
-    public function getStatus(): string
-    {
-        return $this->payload['status'];
-    }
-
-    public function getResponseCode(): string
-    {
-        return $this->payload['response_code'];
-    }
-
-    public function getResponseMessage(): string
-    {
-        return $this->payload['response_message'];
-    }
-
-    public function getSignature(): string
-    {
-        return $this->payload['signature'];
+        return $this->getResponseStatusCode() == '18';
     }
 
     public function getMerchantReference(): string
@@ -54,10 +38,5 @@ class TokenizationResponse
     public function getCardBin()
     {
         return $this->payload['card_bin'];
-    }
-
-    public function getPayload(): array
-    {
-        return $this->payload;
     }
 }

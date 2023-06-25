@@ -96,6 +96,10 @@ abstract class Payfort
         $shaString = '';
         ksort($data);
         foreach ($data as $k => $v) {
+            if (empty($v)) {
+                continue;
+            }
+
             $shaString .= "$k=$v";
         }
 

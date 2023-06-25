@@ -3,6 +3,7 @@
 
 namespace RSE\PayfortForLaravel;
 
+use Illuminate\Support\Carbon;
 use RSE\PayfortForLaravel\Events\PaymentFailed;
 use RSE\PayfortForLaravel\Events\PaymentSuccess;
 use RSE\PayfortForLaravel\Exceptions\RequestFailed;
@@ -14,6 +15,7 @@ use RSE\PayfortForLaravel\Services\AuthorizePurchaseService;
 use RSE\PayfortForLaravel\Services\CaptureService;
 use RSE\PayfortForLaravel\Services\CheckStatusService;
 use RSE\PayfortForLaravel\Services\GetInstallmentsPlansService;
+use RSE\PayfortForLaravel\Services\PaymentLinkService;
 use RSE\PayfortForLaravel\Services\RedirectionMethodService;
 use RSE\PayfortForLaravel\Services\RefundService;
 use RSE\PayfortForLaravel\Services\TokenizationService;
@@ -284,5 +286,33 @@ class PayfortIntegration
             ->setRedirectUrl($returnUrl)
             ->setAmount($amount)
             ->handle();
+    }
+
+    /**
+     * @param                            $amount
+     * @param string                     $email
+     * @param \Illuminate\Support\Carbon $expiryDate
+     * @param string                     $returnUrl
+     * @param array                      $notificationType
+     * @param string|null                $merchant_reference
+     * @return \RSE\PayfortForLaravel\Services\PaymentLinkService
+     */
+    public function paymentLink(
+        $amount,
+        string $email,
+        Carbon $expiryDate,
+        string $returnUrl,
+        array $notificationType = ['EMAIL'],
+        ?string $merchant_reference = null
+    ): PaymentLinkService {
+        return app(PaymentLinkService::class)
+            ->setMerchant($this->merchant)
+            ->setMerchantExtras($this->merchant_extras)
+            ->setMerchantReference($merchant_reference)
+            ->setEmail($email)
+            ->setNotificationType($notificationType)
+            ->setExpiryDate($expiryDate)
+            ->setRedirectUrl($returnUrl)
+            ->setAmount($amount);
     }
 }

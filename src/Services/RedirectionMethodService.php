@@ -6,7 +6,7 @@ use RSE\PayfortForLaravel\Exceptions\RequestFailed;
 use RSE\PayfortForLaravel\Repositories\Payfort;
 use RSE\PayfortForLaravel\Traits\FortParams;
 use RSE\PayfortForLaravel\Traits\PaymentResponseHelpers;
-use RSE\PayfortForLaravel\Traits\ResponseHelpers;
+use RSE\PayfortForLaravel\Traits\ApiResponseHelpers;
 
 class RedirectionMethodService extends Payfort
 {
@@ -42,7 +42,7 @@ class RedirectionMethodService extends Payfort
         $form = '<form name="payfort_payment_form" id="payfort_payment_form" method="post" action="' . $gatewayUrl . '">';
 
         foreach ($postData as $k => $v) {
-            $form .= '<input type="hidden" name="' . $k . '" value="' . htmlentities($v) . '">';
+            $form .= '<input type="hidden" name="' . htmlentities($k) . '" value="' . htmlentities($v) . '">';
         }
 
         $form .= '<input type="submit" value="You will be redirected to the payment page ..">';

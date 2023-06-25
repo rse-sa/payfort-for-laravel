@@ -6,11 +6,11 @@ use RSE\PayfortForLaravel\Exceptions\RequestFailed;
 use RSE\PayfortForLaravel\Repositories\Payfort;
 use RSE\PayfortForLaravel\Repositories\StatusResponse;
 use RSE\PayfortForLaravel\Traits\PaymentResponseHelpers;
-use RSE\PayfortForLaravel\Traits\ResponseHelpers;
+use RSE\PayfortForLaravel\Traits\ApiResponseHelpers;
 
 class CheckStatusService extends Payfort
 {
-    use ResponseHelpers;
+    use ApiResponseHelpers;
 
     protected $fort_params = [];
 

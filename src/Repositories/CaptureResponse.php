@@ -2,8 +2,12 @@
 
 namespace RSE\PayfortForLaravel\Repositories;
 
+use RSE\PayfortForLaravel\Traits\RepositoryHelpers;
+
 class CaptureResponse
 {
+    use RepositoryHelpers;
+
     protected array $payload = [];
 
     public function __construct(array $data)
@@ -14,31 +18,6 @@ class CaptureResponse
     public static function fromArray(array $data): static
     {
         return (new self($data));
-    }
-
-    public function getResponseCode(): string
-    {
-        return $this->payload['response_code'];
-    }
-
-    public function getResponseMessage(): string
-    {
-        return $this->payload['response_message'];
-    }
-
-    public function getResponseStatusCode(): string
-    {
-        return $this->payload['status'] ?? substr($this->getResponseCode(), 0, 2);
-    }
-
-    public function getResponseMessageCode(): string
-    {
-        return substr($this->getResponseCode(), 2);
-    }
-
-    public function getSignature(): string
-    {
-        return $this->payload['signature'];
     }
 
     public function isCaptureSuccessful(): bool
@@ -80,15 +59,4 @@ class CaptureResponse
     {
         return $this->payload['order_description'] ?? null;
     }
-
-    public function getPayload(): array
-    {
-        return $this->payload;
-    }
-
-    public function getResponse(): array
-    {
-        return $this->getPayload();
-    }
-
 }

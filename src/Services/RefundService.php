@@ -5,11 +5,11 @@ namespace RSE\PayfortForLaravel\Services;
 use RSE\PayfortForLaravel\Exceptions\PaymentFailed;
 use RSE\PayfortForLaravel\Repositories\Payfort;
 use RSE\PayfortForLaravel\Repositories\RefundResponse;
-use RSE\PayfortForLaravel\Traits\ResponseHelpers;
+use RSE\PayfortForLaravel\Traits\ApiResponseHelpers;
 
 class RefundService extends Payfort
 {
-    use ResponseHelpers;
+    use ApiResponseHelpers;
 
     /**
      * @throws PaymentFailed

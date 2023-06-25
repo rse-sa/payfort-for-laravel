@@ -7,11 +7,11 @@ use RSE\PayfortForLaravel\Repositories\CaptureResponse;
 use RSE\PayfortForLaravel\Repositories\Payfort;
 use RSE\PayfortForLaravel\Traits\FortParams;
 use RSE\PayfortForLaravel\Traits\PaymentResponseHelpers;
-use RSE\PayfortForLaravel\Traits\ResponseHelpers;
+use RSE\PayfortForLaravel\Traits\ApiResponseHelpers;
 
 class CaptureService extends Payfort
 {
-    use ResponseHelpers, FortParams, PaymentResponseHelpers;
+    use ApiResponseHelpers, FortParams, PaymentResponseHelpers;
 
     /**
      * @return \RSE\PayfortForLaravel\Repositories\CaptureResponse

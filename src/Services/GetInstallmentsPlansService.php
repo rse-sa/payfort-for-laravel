@@ -4,11 +4,11 @@ namespace RSE\PayfortForLaravel\Services;
 
 use RSE\PayfortForLaravel\Exceptions\RequestFailed;
 use RSE\PayfortForLaravel\Repositories\Payfort;
-use RSE\PayfortForLaravel\Traits\ResponseHelpers;
+use RSE\PayfortForLaravel\Traits\ApiResponseHelpers;
 
 class GetInstallmentsPlansService extends Payfort
 {
-    use ResponseHelpers;
+    use ApiResponseHelpers;
 
     /**
      * @throws \RSE\PayfortForLaravel\Exceptions\RequestFailed

@@ -2,8 +2,12 @@
 
 namespace RSE\PayfortForLaravel\Repositories;
 
+use RSE\PayfortForLaravel\Traits\RepositoryHelpers;
+
 class StatusResponse
 {
+    use RepositoryHelpers;
+
     protected array $payload = [];
 
     public function __construct(array $data)
@@ -21,11 +25,6 @@ class StatusResponse
         return $this->payload['transaction_status'] == '14';
     }
 
-    public function getResponseStatus(): string
-    {
-        return $this->payload['status'];
-    }
-
     public function getTransactionStatus(): string
     {
         return $this->payload['transaction_status'];
@@ -41,34 +40,9 @@ class StatusResponse
         return $this->payload['transaction_message'];
     }
 
-    public function getResponseCode(): string
-    {
-        return $this->payload['response_code'];
-    }
-
-    public function getResponseMessage(): string
-    {
-        return $this->payload['response_message'];
-    }
-
-    public function getSignature(): string
-    {
-        return $this->payload['signature'];
-    }
-
     public function getMerchantReference(): string
     {
         return $this->payload['merchant_reference'];
-    }
-
-    public function getPayload(): array
-    {
-        return $this->payload;
-    }
-
-    public function getResponse(): array
-    {
-        return $this->getPayload();
     }
 
     public function getFortId(): string

@@ -5,7 +5,7 @@ namespace RSE\PayfortForLaravel\Traits;
 /**
  * response code
  */
-trait ResponseHelpers
+trait ApiResponseHelpers
 {
     public function getResponseFortId(): ?string
     {
