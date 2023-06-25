@@ -18,10 +18,10 @@ Currently, this package supports the below operation list:
 - REDIRECTION [NEW]
 - PAYMENT LINKS (INVOICES) [NEW]
 
-This package support using multiple merchant accounts.
-
 Please make sure to read and understand `payfort` documentation.
 https://paymentservices-reference.payfort.com/docs/api/build/index.html
+
+This package support using multiple merchant accounts.
 
 Currently, it supports only Laravel 9.
 
@@ -214,7 +214,7 @@ or the used payment method by this:
 $response->getPaymentOption()
 ```
 
-### Process Post Response
+### Process Post Response (Callback)
 To process the response coming from payfort and to make sure it's valid you can use the following code snippet:
 ```php
 use \RSE\PayfortForLaravel\Facades\Payfort;
@@ -244,7 +244,7 @@ Used only after authorization, to send a capture command use code below:
 ```php
 use \RSE\PayfortForLaravel\Facades\Payfort;
 
-Payfort::capture(
+$capture = Payfort::capture(
     'fort_id', # fort id for the payment transaction
     100.0 # bill amount
 );
@@ -255,7 +255,7 @@ Used only after authorization, to send a void command use code below:
 ```php
 use \RSE\PayfortForLaravel\Facades\Payfort;
 
-Payfort::void(
+$void = Payfort::void(
     'fort_id' # fort id for the payment transaction
 );
 ```
@@ -265,9 +265,19 @@ Used only after purchase, to send a refund command use the code below:
 ```php
 use \RSE\PayfortForLaravel\Facades\Payfort;
 
-Payfort::refund(
+$refund = Payfort::refund(
     'fort_id', # fort id for the payment transaction
     1000 # amount to be reunded must not exceed the bill amount
+);
+```
+
+### Check Status
+Used to get the status of payment transaction and validate whether payment is accepted or not.
+```php
+use \RSE\PayfortForLaravel\Facades\Payfort;
+
+$status = Payfort::checkStatus(
+    'fort_id', # fort id for the payment transaction
 );
 ```
 
