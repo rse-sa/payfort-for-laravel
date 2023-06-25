@@ -42,14 +42,14 @@ class PayfortIntegration
     /**
      * Set merchant extras to be sent to payfort
      *
-     * @param string|int $extra1
-     * @param string|int $extra2
-     * @param string|int $extra3
-     * @param string|int $extra4
-     * @param string|int $extra5
+     * @param string $extra1
+     * @param string $extra2
+     * @param string $extra3
+     * @param string $extra4
+     * @param string $extra5
      * @return self
      */
-    public function setMerchantExtra($extra1, $extra2 = '', $extra3 = '', $extra4 = '', $extra5 = ''): self
+    public function setMerchantExtra(string $extra1, string $extra2 = '', string $extra3 = '', string $extra4 = '', string $extra5 = ''): self
     {
         for ($i = 1; $i <= 5; $i++) {
             if (! empty(${'extra' . $i}) && ! is_array(${'extra' . $i})) {
@@ -169,6 +169,40 @@ class PayfortIntegration
             ->setMerchantExtras($this->merchant_extras)
             ->setRedirectUrl($redirect_url)
             ->withForm($form_flag)
+            ->handle();
+    }
+
+    /**
+     * prepare tokenization params and return array
+     * by default it will return a form params.
+     *
+     * @param float       $amount
+     * @param string      $redirect_url
+     * @param string      $card_number
+     * @param string      $expiry_date
+     * @param string      $card_security_code
+     * @param string      $card_holder_name
+     * @param string|null $merchant_reference
+     * @return array
+     * @throws \Throwable
+     */
+    public function tokenizationForCustom(
+        float $amount,
+        string $redirect_url,
+        string $card_number,
+        string $expiry_date,
+        string $card_security_code,
+        string $card_holder_name,
+        ?string $merchant_reference = null,
+    ): array {
+        return app(TokenizationService::class)
+            ->setMerchant($this->merchant)
+            ->setMerchantReference($merchant_reference)
+            ->setAmount($amount)
+            ->setMerchantExtras($this->merchant_extras)
+            ->setRedirectUrl($redirect_url)
+            ->withForm(TokenizationService::FORM_EXTERNAL)
+            ->setCardInformation($card_number,$expiry_date,$card_security_code, $card_holder_name)
             ->handle();
     }
 

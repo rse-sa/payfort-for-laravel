@@ -22,7 +22,7 @@
     "require": {
         "php": ">=7.4",
         "ext-curl": "*",
-        "illuminate/support": "^8.50|^9.0",
+        "laravel/framework": "^8.50|^9.0",
         "nesbot/carbon": "^2.0",
         "guzzlehttp/guzzle": "^7.4"
     },

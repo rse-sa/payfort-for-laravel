@@ -19,7 +19,8 @@ use RSE\PayfortForLaravel\Services\TokenizationService;
  * phpcs:disable
  * @method static PayfortIntegration            setMerchant(array $merchant)
  * @method static PayfortIntegration            setMerchantExtra(...$extras)
- * @method static TokenizationService           tokenization(float $amount, string $redirect_url, bool $form_flag = true, ?string $merchant_reference = null)
+ * @method static array                         tokenization(float $amount, string $redirect_url, bool $form_flag = true, ?string $merchant_reference = null)
+ * @method static array                         tokenizationForCustom(float $amount,string $redirect_url,string $card_number,string $expiry_date,string $card_security_code,string $card_holder_name,?string $merchant_reference = null)
  * @method static PurchaseResponse              purchase(array $fort_params, float $amount, string $email, string $redirect_url, array $installments_params = [])
  * @method static PurchaseResponse              authorize(array $fort_params, float $amount, string $email, string $redirect_url)
  * @method static VoidResponse                  void(string $fort_id)

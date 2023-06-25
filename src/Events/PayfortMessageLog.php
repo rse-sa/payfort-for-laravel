@@ -19,7 +19,7 @@ class PayfortMessageLog
      */
     public function __construct($request, $response)
     {
-        $this->request = $request;
+        $this->request  = $request;
         $this->response = $response;
     }
 }

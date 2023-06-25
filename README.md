@@ -36,28 +36,6 @@ php artisan vendor:publish --tag payfort-config
 ```
 This will generate a `config/payfort.php` with the default configurations
 
-```php
-return [
-    'gateway_host' => env('PAYFORT_GATEWAY_HOST', 'https://checkout.payfort.com/'),
-    
-    'gateway_sandbox_host' => env('PAYFORT_GATEWAY_SAND_BOX_HOST', 'https://sbcheckout.payfort.com/'),
-
-    'merchants' => [
-        'default' => [
-            'merchant_identifier' => env('PAYFORT_MERCHANT_IDENTIFIER', null),
-            'access_code' => env('PAYFORT_ACCESS_CODE', null),
-            'SHA_request_phrase' => env('PAYFORT_SHA_REQUEST_PHRASE', null),
-            'SHA_response_phrase' => env('PAYFORT_SHA_RESPONSE_PHRASE', null),
-        ],
-    ],
-
-    'sandbox_mode' => env('PAYFORT_SANDBOX_MODE', true),
-    
-    'SHA_type' => env('PAYFORT_SHA_TYPE', 'sha256'),
-    
-    'language' => env('PAYFORT_LANGUAGE', 'en'),
-];
-```
 ### Then you can update your `.env` file to have the correct credentials:
 ```bash
 PAYFORT_SANDBOX_MODE=true                     # Defines wether to activate the payfort sandbox enviroment or not.
@@ -118,16 +96,32 @@ if ($status->isPurchaseSuccessful()) {
 
 ------------------
 
-## Usage (Standard Integration Method)
-Once you identified your credentials and configurations, your are ready to use payfort operations.
+## Usage (Standard/Custom Merchant Page Methods)
+Once you identified your credentials and configurations, you are ready to use payfort operations.
 
 ### Tokenization request:
 To display tokenization page, in your controller method you can add the following
 ```php
+// For Standard Merchant Page 
 $tokenization = Payfort::tokenization(
     $billAmount,
     'redirect_url',
     TokenizationService::FORM_IFRAME,
+    $merchant_reference,
+);
+
+return response()->view('payment-form', [
+    'form' => $tokenization['form'],
+]);
+
+// For Custom Merchant Page 
+$tokenization = Payfort::tokenizationForCustom(
+    $billAmount,
+    'redirect_url',
+    $card_number,
+    $expiry_date,
+    $card_security_code,
+    $card_holder_name,
     $merchant_reference,
 );
 

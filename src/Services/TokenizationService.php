@@ -10,12 +10,14 @@ class TokenizationService extends Payfort
     const FORM_NONE = 0;
     const FORM_EXTERNAL = 1;
     const FORM_IFRAME = 2;
-
+    const FORM_DISPLAY = 3;
     protected bool $has_3ds;
-
-    protected ?string $payment_method = null;
-
+    protected string $payment_method = 'cc_merchantpage2';
     protected bool $form_type = false;
+    protected string $card_number;
+    protected string $expiry_date;
+    protected string $card_security_code;
+    protected string $card_holder_name;
 
     /**
      * @throws \Exception|\Throwable
@@ -37,6 +39,13 @@ class TokenizationService extends Payfort
             $params['amount'] = $this->convertFortAmount($this->amount);
         }
 
+        if (isset($this->card_number)) {
+            $params['card_number'] = $this->card_number;
+            $params['expiry_date'] = $this->expiry_date;
+            $params['card_security_code'] = $this->card_security_code;
+            $params['card_holder_name'] = $this->card_holder_name;
+        }
+
         $params = array_merge($params, $this->merchant_extras);
 
         $params['signature'] = $this->calculateSignature($params);
@@ -44,7 +53,7 @@ class TokenizationService extends Payfort
         $result = [
             'url' => $this->getGatewayUrl(),
             'params' => $params,
-            'paymentMethod' => 'cc_merchantpage2',
+            'paymentMethod' => $this->payment_method,
         ];
 
         if ($this->form_type > 0) {
@@ -77,18 +86,19 @@ class TokenizationService extends Payfort
 
     public function getPaymentForm($gatewayUrl, $postData): string
     {
-        $form = '<form style="display:none" name="payfort_payment_form" id="payfort_payment_form" method="post" action="' . $gatewayUrl . '" '
-            . ($this->form_type == self::FORM_IFRAME ? "target='payfortFrame'" : "") .'>';
+        $form = '<form ' . ($this->form_type == self::FORM_DISPLAY ? '' : 'style="display:none"') . ' name="payfort_payment_form" id="payfort_payment_form"
+            method="post" action="' . $gatewayUrl . '" '
+            . ($this->form_type == self::FORM_IFRAME ? "target='payfortFrame'" : "") . '>';
 
         foreach ($postData as $k => $v) {
-            $form .= '<input type="hidden" name="' . $k . '" value="' . $v . '">';
+            $form .= '<input type="hidden" name="' . htmlentities($k) . '" value="' . htmlentities($v) . '">';
         }
 
         $form .= '<input type="submit" id="submit_btn" value="ready to pay">';
 
         $form .= '</form>';
 
-        if($this->form_type == self::FORM_EXTERNAL || $this->form_type == self::FORM_IFRAME){
+        if ($this->form_type == self::FORM_EXTERNAL || $this->form_type == self::FORM_IFRAME) {
             $form .= "<script>document.forms['payfort_payment_form'].submit();</script>";
         }
 
@@ -98,6 +108,16 @@ class TokenizationService extends Payfort
     public function withForm(int $flag): self
     {
         $this->form_type = $flag;
+
+        return $this;
+    }
+
+    public function setCardInformation(string $card_number, string $expiry_date, string $card_security_code, string $card_holder_name): self
+    {
+        $this->card_number = $card_number;
+        $this->expiry_date = $expiry_date;
+        $this->card_security_code = $card_security_code;
+        $this->card_holder_name = $card_holder_name;
 
         return $this;
     }
