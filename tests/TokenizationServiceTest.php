@@ -1,10 +1,10 @@
 <?php
 
-namespace PayfortForLaravel\Test;
+namespace RSE\PayfortForLaravel\Test;
 
-use PayfortForLaravel\Test\TestCase;
-use PayfortForLaravel\Facades\Payfort;
-use PayfortForLaravel\Services\TokenizationService;
+use RSE\PayfortForLaravel\Test\TestCase;
+use RSE\PayfortForLaravel\Facades\Payfort;
+use RSE\PayfortForLaravel\Services\TokenizationService;
 
 class TokenizationServiceTest extends TestCase
 {
@@ -29,7 +29,7 @@ class TokenizationServiceTest extends TestCase
             "service_command" => "TOKENIZATION",
             "merchant_identifier" => null,
             "access_code" => null,
-            "language" => null,
+            "language" => 'en',
             "return_url" => $returnUrl,
             "merchant_reference" => "refernece",
             "signature" => "signature"
@@ -99,7 +99,7 @@ class TokenizationServiceTest extends TestCase
             "merchant_identifier" => null,
             "access_code" => null,
             "merchant_reference" => "refernece",
-            "language" => null,
+            "language" => 'en',
             "return_url" => $returnUrl,
             "merchant_extra" => 100,
             "merchant_extra1" => "new",

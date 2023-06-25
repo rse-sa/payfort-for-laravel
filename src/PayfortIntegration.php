@@ -4,15 +4,13 @@
 namespace RSE\PayfortForLaravel;
 
 use Illuminate\Support\Carbon;
-use RSE\PayfortForLaravel\Events\PaymentFailed;
-use RSE\PayfortForLaravel\Events\PaymentSuccess;
-use RSE\PayfortForLaravel\Exceptions\RequestFailed;
 use RSE\PayfortForLaravel\Repositories\CaptureResponse;
 use RSE\PayfortForLaravel\Repositories\PaymentLinkCallbackResponse;
 use RSE\PayfortForLaravel\Repositories\PurchaseResponse;
 use RSE\PayfortForLaravel\Repositories\RefundResponse;
 use RSE\PayfortForLaravel\Repositories\StatusResponse;
 use RSE\PayfortForLaravel\Repositories\TokenizationResponse;
+use RSE\PayfortForLaravel\Repositories\VoidResponse;
 use RSE\PayfortForLaravel\Services\AuthorizePurchaseService;
 use RSE\PayfortForLaravel\Services\CaptureService;
 use RSE\PayfortForLaravel\Services\CheckStatusService;
@@ -92,10 +90,10 @@ class PayfortIntegration
 
     /**
      * @param string $fort_id
-     * @return \RSE\PayfortForLaravel\Services\VoidService
+     * @return \RSE\PayfortForLaravel\Repositories\VoidResponse
      * @throws \RSE\PayfortForLaravel\Exceptions\PaymentFailed
      */
-    public function void(string $fort_id): VoidService
+    public function void(string $fort_id): VoidResponse
     {
         return app(VoidService::class)
             ->setMerchant($this->merchant)
@@ -132,7 +130,7 @@ class PayfortIntegration
         float $amount,
         string $redirect_url,
         int $form_flag = TokenizationService::FORM_IFRAME,
-        ?string $merchant_reference = null,
+        ?string $merchant_reference = null
     ): array {
         return app(TokenizationService::class)
             ->setMerchant($this->merchant)
@@ -165,7 +163,7 @@ class PayfortIntegration
         string $expiry_date,
         string $card_security_code,
         string $card_holder_name,
-        ?string $merchant_reference = null,
+        ?string $merchant_reference = null
     ): array {
         return app(TokenizationService::class)
             ->setMerchant($this->merchant)
@@ -236,8 +234,7 @@ class PayfortIntegration
         float $amount,
         string $email,
         string $redirect_url
-    ): AuthorizePurchaseService {
-        /** @var \RSE\PayfortForLaravel\Services\AuthorizePurchaseService */
+    ): PurchaseResponse {
         return app(AuthorizePurchaseService::class)
             ->setAuthorizationCommand()
             ->setMerchant($this->merchant)

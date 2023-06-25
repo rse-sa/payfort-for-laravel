@@ -1,13 +1,13 @@
 <?php
 
-namespace PayfortForLaravel\Test;
+namespace RSE\PayfortForLaravel\Test;
 
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
-use PayfortForLaravel\Test\TestCase;
-use PayfortForLaravel\Facades\Payfort;
-use PayfortForLaravel\Services\RefundService;
-use PayfortForLaravel\Exceptions\PaymentFailed;
+use RSE\PayfortForLaravel\Test\TestCase;
+use RSE\PayfortForLaravel\Facades\Payfort;
+use RSE\PayfortForLaravel\Services\RefundService;
+use RSE\PayfortForLaravel\Exceptions\PaymentFailed;
 
 class RefundServiceTest extends TestCase
 {
@@ -41,7 +41,7 @@ class RefundServiceTest extends TestCase
                 "command" => "REFUND",
                 "access_code" => null,
                 "merchant_identifier" => null,
-                "language" => null,
+                "language" => 'en',
                 "fort_id" => 123,
                 "currency" => "SAR",
                 "amount" => 12300.0,
@@ -68,7 +68,7 @@ class RefundServiceTest extends TestCase
                 "command" => "REFUND",
                 "access_code" => null,
                 "merchant_identifier" => null,
-                "language" => null,
+                "language" => 'en',
                 "fort_id" => 123,
                 "currency" => "SAR",
                 "amount" => 12300.0,

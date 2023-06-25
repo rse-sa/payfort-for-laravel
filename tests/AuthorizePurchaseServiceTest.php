@@ -1,13 +1,14 @@
 <?php
 
-namespace PayfortForLaravel\Test;
+namespace RSE\PayfortForLaravel\Test;
 
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
-use PayfortForLaravel\Test\TestCase;
-use PayfortForLaravel\Facades\Payfort;
-use PayfortForLaravel\Exceptions\PaymentFailed;
-use PayfortForLaravel\Services\AuthorizePurchaseService;
+use RSE\PayfortForLaravel\Exceptions\RequestFailed;
+use RSE\PayfortForLaravel\Test\TestCase;
+use RSE\PayfortForLaravel\Facades\Payfort;
+use RSE\PayfortForLaravel\Exceptions\PaymentFailed;
+use RSE\PayfortForLaravel\Services\AuthorizePurchaseService;
 
 class AuthorizePurchaseServiceTest extends TestCase
 {
@@ -38,6 +39,7 @@ class AuthorizePurchaseServiceTest extends TestCase
 
         Payfort::purchase([
             "merchant_reference" => "merchant_reference",
+            "response_code" => "00000",
             "response_message" => "test",
             "token_name" => "token_name",
             "signature" => "signature"
@@ -53,7 +55,7 @@ class AuthorizePurchaseServiceTest extends TestCase
                 "currency" => "SAR",
                 "customer_email" => "test@test.com",
                 "token_name" => "token_name",
-                "language" => null,
+                "language" => 'en',
                 "return_url" => "redirect_uri",
                 "amount" => 100000.0,
                 "signature" => "signature",
@@ -81,8 +83,8 @@ class AuthorizePurchaseServiceTest extends TestCase
 
         Payfort::purchase([
             "merchant_reference" => "merchant_reference",
+            "response_code" => "00000",
             "response_message" => "test",
-
             "token_name" => "token_name",
             "signature" => "signature"
         ], 1000, "test@test.com", "redirect_uri", $install_params);
@@ -101,7 +103,7 @@ class AuthorizePurchaseServiceTest extends TestCase
                 'installments' => 'HOSTED',
                 'issuer_code' => 'ab345678',
                 'plan_code' => 'de345678',
-                'language' => null,
+                'language' => 'en',
                 'return_url' => "redirect_uri",
                 "signature" => "signature"
             ])) === 0 && $request->url() === 'test_link' && $request->method() === 'POST';
@@ -124,6 +126,7 @@ class AuthorizePurchaseServiceTest extends TestCase
 
         Payfort::authorize([
             "merchant_reference" => "merchant_reference",
+            "response_code" => "00000",
             "response_message" => "test",
             "token_name" => "token_name",
             "signature" => "signature"
@@ -140,7 +143,7 @@ class AuthorizePurchaseServiceTest extends TestCase
                 'currency' => "SAR",
                 'customer_email' => "test@test.com",
                 'token_name' => "token_name",
-                'language' => null,
+                'language' => 'en',
                 'return_url' => "redirect_uri",
                 "signature" => "signature"
             ])) === 0 && $request->url() === 'test_link' && $request->method() === 'POST';
@@ -150,7 +153,7 @@ class AuthorizePurchaseServiceTest extends TestCase
     /** @test */
     public function throw_error_if_no_params_from_tokenization()
     {
-        $this->expectException(PaymentFailed::class);
+        $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage("Invalid Response Parameters");
 
         Payfort::purchase([], 1000, "test@test.com", "redirect_uri");
@@ -159,7 +162,7 @@ class AuthorizePurchaseServiceTest extends TestCase
     /** @test */
     public function throw_error_if_signature_is_not_valid_from_tokenization()
     {
-        $this->expectException(PaymentFailed::class);
+        $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage("Invalid signature");
 
         Payfort::purchase([
@@ -185,7 +188,6 @@ class AuthorizePurchaseServiceTest extends TestCase
 
         Payfort::purchase([
             "merchant_reference" => "merchant_reference",
-            "response_message" => "test",
             "token_name" => "token_name",
             "signature" => "signature",
             "response_code" => "111111",
@@ -217,14 +219,14 @@ class AuthorizePurchaseServiceTest extends TestCase
             "response_code" => 20000,
         ], 1000, "test@test.com", "redirect_uri");
 
-        $this->assertEquals(true, $payfort->should3DsRedirect());
+        $this->assertTrue($payfort->should3DsRedirect());
         $this->assertEquals("test_3ds_url", $payfort->get3DsUri());
     }
 
     /** @test */
     public function throw_error_if_no_params_from_purchase()
     {
-        $this->expectException(PaymentFailed::class);
+        $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage("Invalid Response Parameters");
 
         $this->mock(AuthorizePurchaseService::class, function ($mock) {
@@ -249,7 +251,7 @@ class AuthorizePurchaseServiceTest extends TestCase
     /** @test */
     public function throw_error_if_signature_is_not_valid_from_purchase()
     {
-        $this->expectException(PaymentFailed::class);
+        $this->expectException(RequestFailed::class);
         $this->expectExceptionMessage("Invalid signature");
 
         $this->mock(AuthorizePurchaseService::class, function ($mock) {
@@ -268,7 +270,6 @@ class AuthorizePurchaseServiceTest extends TestCase
         Payfort::purchase([
             "merchant_reference" => "merchant_reference",
             "response_message" => "test",
-
             "token_name" => "token_name",
             "signature" => "signature",
             "response_code" => 20000,
@@ -322,6 +323,7 @@ class AuthorizePurchaseServiceTest extends TestCase
 
         Payfort::authorize([
             "merchant_reference" => "merchant_reference",
+            "response_code" => "00000",
             "response_message" => "test",
             "token_name" => "token_name",
             "signature" => "signature"
@@ -338,7 +340,7 @@ class AuthorizePurchaseServiceTest extends TestCase
                 'currency' => "SAR",
                 'customer_email' => "test@test.com",
                 'token_name' => "token_name",
-                'language' => null,
+                'language' => 'en',
                 'return_url' => "redirect_uri",
                 "signature" => "signature"
             ])) === 0 && $request->url() === 'test_link' && $request->method() === 'POST';
@@ -361,6 +363,7 @@ class AuthorizePurchaseServiceTest extends TestCase
 
         Payfort::purchase([
             "merchant_reference" => "merchant_reference",
+            "response_code" => "00000",
             "response_message" => "test",
             "token_name" => "token_name",
             "signature" => "signature"
@@ -377,7 +380,7 @@ class AuthorizePurchaseServiceTest extends TestCase
                 'currency' => "SAR",
                 'customer_email' => "test@test.com",
                 'token_name' => "token_name",
-                'language' => null,
+                'language' => 'en',
                 'return_url' => "redirect_uri",
                 "signature" => "signature"
             ])) === 0 && $request->url() === 'test_link' && $request->method() === 'POST';
@@ -398,10 +401,10 @@ class AuthorizePurchaseServiceTest extends TestCase
             $mock->shouldReceive('getOperationUrl')->andReturn('test_link');
         });
 
-        Payfort::setMerchantExtra(100)
-            ->purchase([
+        Payfort::setMerchantExtra(100)->purchase([
                 "merchant_reference" => "merchant_reference",
                 "response_message" => "test",
+                "response_code" => "00000",
                 "token_name" => "token_name",
                 "signature" => "signature"
             ], 9386.30, "test@test.com", "redirect_uri");
@@ -417,7 +420,7 @@ class AuthorizePurchaseServiceTest extends TestCase
                 'currency' => "SAR",
                 'customer_email' => "test@test.com",
                 'token_name' => "token_name",
-                'language' => null,
+                'language' => 'en',
                 'merchant_extra' => 100,
                 'return_url' => "redirect_uri",
                 "signature" => "signature"

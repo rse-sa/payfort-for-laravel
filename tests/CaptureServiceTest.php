@@ -1,12 +1,12 @@
 <?php
 
-namespace PayfortForLaravel\Test;
+namespace RSE\PayfortForLaravel\Test;
 
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
-use PayfortForLaravel\Test\TestCase;
-use PayfortForLaravel\Facades\Payfort;
-use PayfortForLaravel\Services\CaptureService;
+use RSE\PayfortForLaravel\Test\TestCase;
+use RSE\PayfortForLaravel\Facades\Payfort;
+use RSE\PayfortForLaravel\Services\CaptureService;
 
 class CaptureServiceTest extends TestCase
 {
@@ -16,8 +16,8 @@ class CaptureServiceTest extends TestCase
 
         Http::fake([
             '*' => Http::response([
-                'response_code' => '06000',
-                'response_message' => '06000'
+                'response_code' => '04000',
+                'response_message' => '04000'
             ])
         ]);
     }
@@ -46,7 +46,7 @@ class CaptureServiceTest extends TestCase
                 'merchant_identifier' => null,
                 'amount' => 100000.0,
                 'currency' => 'SAR',
-                'language' => 'ar',
+                'language' => 'en',
                 'fort_id' => $fort_id,
                 "signature" => "signature",
             ])) === 0 && $request->url() === 'test_link' && $request->method() === 'POST';
@@ -77,7 +77,7 @@ class CaptureServiceTest extends TestCase
                 'merchant_identifier' => null,
                 'amount' => 100000.0,
                 'currency' => 'SAR',
-                'language' => 'ar',
+                'language' => 'en',
                 'merchant_extra' => 500,
                 'fort_id' => $fort_id,
                 "signature" => "signature",

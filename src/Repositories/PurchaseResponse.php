@@ -15,9 +15,9 @@ class PurchaseResponse
         $this->payload = $data;
     }
 
-    public static function fromArray(array $data): static
+    public static function fromArray(array $data): self
     {
-        return (new self($data));
+        return (new static($data));
     }
 
     public function isPurchaseSuccessful(): bool

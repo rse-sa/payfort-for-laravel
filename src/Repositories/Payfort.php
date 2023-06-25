@@ -13,11 +13,11 @@ abstract class Payfort
 
     protected string $fort_id;
 
-    protected string $language;
+    protected string $language = 'en';
 
-    protected bool $sandbox_mode;
+    protected bool $sandbox_mode = true;
 
-    protected string $SHA_type;
+    protected string $SHA_type = 'sha256';
 
     protected string $installment_url;
 
@@ -56,7 +56,7 @@ abstract class Payfort
             'https://checkout.payfort.com/FortAPI/paymentPage';
     }
 
-    public function setMerchantReference(string $reference): static
+    public function setMerchantReference(?string $reference): self
     {
         $this->merchant_reference = $reference;
 

@@ -1,15 +1,15 @@
 <?php
 
-namespace PayfortForLaravel\Test;
+namespace RSE\PayfortForLaravel\Test;
 
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Event;
-use PayfortForLaravel\Test\TestCase;
-use PayfortForLaravel\Facades\Payfort;
-use PayfortForLaravel\Services\VoidService;
-use PayfortForLaravel\Events\PayfortMessageLog;
-use PayfortForLaravel\Exceptions\PaymentFailed;
+use RSE\PayfortForLaravel\Test\TestCase;
+use RSE\PayfortForLaravel\Facades\Payfort;
+use RSE\PayfortForLaravel\Services\VoidService;
+use RSE\PayfortForLaravel\Events\PayfortMessageLog;
+use RSE\PayfortForLaravel\Exceptions\PaymentFailed;
 
 class VoidServiceTest extends TestCase
 {
@@ -60,7 +60,7 @@ class VoidServiceTest extends TestCase
                 'command' => 'VOID_AUTHORIZATION',
                 "access_code" => null,
                 "merchant_identifier" => null,
-                "language" => null,
+                "language" => 'en',
                 "fort_id" => 123,
                 "signature" => "sssss",
             ])) === 0 && $request->url() === 'test_link' && $request->method() === 'POST';
@@ -111,7 +111,7 @@ class VoidServiceTest extends TestCase
                 "command" => "VOID_AUTHORIZATION",
                 "access_code" => null,
                 "merchant_identifier" => null,
-                "language" => null,
+                "language" => 'en',
                 "fort_id" => $fort_id,
                 "merchant_extra" => 500,
                 "signature" => "signature"

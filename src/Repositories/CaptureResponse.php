@@ -15,9 +15,13 @@ class CaptureResponse
         $this->payload = $data;
     }
 
-    public static function fromArray(array $data): static
+    /**
+     * @param array $data
+     * @return static
+     */
+    public static function fromArray(array $data)
     {
-        return (new self($data));
+        return (new static($data));
     }
 
     public function isCaptureSuccessful(): bool

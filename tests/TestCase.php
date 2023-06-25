@@ -1,6 +1,6 @@
 <?php
 
-namespace PayfortForLaravel\Test;
+namespace RSE\PayfortForLaravel\Test;
 
 use Illuminate\Support\Facades\Http;
 use Orchestra\Testbench\TestCase as TestbenchTestCase;
@@ -24,7 +24,7 @@ class TestCase extends TestbenchTestCase
     protected function getPackageAliases($app)
     {
         return [
-            'Payfort' => \PayfortForLaravel\Facades\Payfort::class,
+            'Payfort' => \RSE\PayfortForLaravel\Facades\Payfort::class,
         ];
     }
 
@@ -38,7 +38,7 @@ class TestCase extends TestbenchTestCase
     protected function getPackageProviders($app)
     {
         return [
-            \PayfortForLaravel\Providers\PayfortServiceProvider::class,
+            \RSE\PayfortForLaravel\Providers\PayfortServiceProvider::class,
         ];
     }
 }
