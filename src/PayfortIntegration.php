@@ -8,9 +8,11 @@ use RSE\PayfortForLaravel\Events\PaymentFailed;
 use RSE\PayfortForLaravel\Events\PaymentSuccess;
 use RSE\PayfortForLaravel\Exceptions\RequestFailed;
 use RSE\PayfortForLaravel\Repositories\CaptureResponse;
+use RSE\PayfortForLaravel\Repositories\PaymentLinkCallbackResponse;
 use RSE\PayfortForLaravel\Repositories\PurchaseResponse;
 use RSE\PayfortForLaravel\Repositories\RefundResponse;
 use RSE\PayfortForLaravel\Repositories\StatusResponse;
+use RSE\PayfortForLaravel\Repositories\TokenizationResponse;
 use RSE\PayfortForLaravel\Services\AuthorizePurchaseService;
 use RSE\PayfortForLaravel\Services\CaptureService;
 use RSE\PayfortForLaravel\Services\CheckStatusService;
@@ -19,8 +21,9 @@ use RSE\PayfortForLaravel\Services\PaymentLinkService;
 use RSE\PayfortForLaravel\Services\RedirectionMethodService;
 use RSE\PayfortForLaravel\Services\RefundService;
 use RSE\PayfortForLaravel\Services\TokenizationService;
+use RSE\PayfortForLaravel\Services\ValidatePaymentLinkCallback;
 use RSE\PayfortForLaravel\Services\ValidatePostResponse;
-use RSE\PayfortForLaravel\Services\ValidateResponseService;
+use RSE\PayfortForLaravel\Services\ValidateTokenizationResponse;
 use RSE\PayfortForLaravel\Services\VoidService;
 
 class PayfortIntegration
@@ -143,6 +146,48 @@ class PayfortIntegration
     }
 
     /**
+     * prepare tokenization params and return array
+     * by default it will return a form params.
+     *
+     * @param float       $amount
+     * @param string      $redirect_url
+     * @param int         $form_flag
+     * @param string|null $merchant_reference
+     * @return array
+     * @throws \Throwable
+     */
+    public function tokenization(
+        float $amount,
+        string $redirect_url,
+        int $form_flag = TokenizationService::FORM_IFRAME,
+        ?string $merchant_reference = null,
+    ): array {
+        return app(TokenizationService::class)
+            ->setMerchant($this->merchant)
+            ->setMerchantReference($merchant_reference)
+            ->setAmount($amount)
+            ->setMerchantExtras($this->merchant_extras)
+            ->setRedirectUrl($redirect_url)
+            ->withForm($form_flag)
+            ->handle();
+    }
+
+    /**
+     * @param array $fort_params
+     * @return \RSE\PayfortForLaravel\Repositories\TokenizationResponse
+     * @throws \RSE\PayfortForLaravel\Exceptions\PaymentFailed
+     * @throws \RSE\PayfortForLaravel\Exceptions\RequestFailed
+     */
+    public function validateTokenizationResponse(array $fort_params): TokenizationResponse
+    {
+        return app(ValidateTokenizationResponse::class)
+            ->setMerchant($this->merchant)
+            ->setMerchantExtras($this->merchant_extras)
+            ->setFortParams($fort_params)
+            ->handle();
+    }
+
+    /**
      * @param array  $fort_params
      * @param float  $amount
      * @param string $email
@@ -198,30 +243,21 @@ class PayfortIntegration
             ->handle();
     }
 
+
     /**
-     * prepare tokenization params and return array
-     * by default it will return a form params.
-     *
-     * @param float       $amount
-     * @param string      $redirect_url
-     * @param int         $form_flag
-     * @param string|null $merchant_reference
-     * @return array
-     * @throws \Throwable
+     * @param string $fort_id
+     * @param        $amount
+     * @return \RSE\PayfortForLaravel\Repositories\CaptureResponse
+     * @throws \RSE\PayfortForLaravel\Exceptions\PaymentFailed
+     * @throws \RSE\PayfortForLaravel\Exceptions\RequestFailed
      */
-    public function tokenization(
-        float $amount,
-        string $redirect_url,
-        int $form_flag = TokenizationService::FORM_IFRAME,
-        ?string $merchant_reference = null,
-    ): array {
-        return app(TokenizationService::class)
+    public function capture(string $fort_id, $amount): CaptureResponse
+    {
+        return app(CaptureService::class)
             ->setMerchant($this->merchant)
-            ->setMerchantReference($merchant_reference)
-            ->setAmount($amount)
             ->setMerchantExtras($this->merchant_extras)
-            ->setRedirectUrl($redirect_url)
-            ->withForm($form_flag)
+            ->setFortId($fort_id)
+            ->setAmount($amount)
             ->handle();
     }
 
@@ -248,23 +284,6 @@ class PayfortIntegration
     {
         return app(GetInstallmentsPlansService::class)
             ->setMerchant($this->merchant)
-            ->handle();
-    }
-
-    /**
-     * @param string $fort_id
-     * @param        $amount
-     * @return \RSE\PayfortForLaravel\Repositories\CaptureResponse
-     * @throws \RSE\PayfortForLaravel\Exceptions\PaymentFailed
-     * @throws \RSE\PayfortForLaravel\Exceptions\RequestFailed
-     */
-    public function capture(string $fort_id, $amount): CaptureResponse
-    {
-        return app(CaptureService::class)
-            ->setMerchant($this->merchant)
-            ->setMerchantExtras($this->merchant_extras)
-            ->setFortId($fort_id)
-            ->setAmount($amount)
             ->handle();
     }
 
@@ -314,5 +333,20 @@ class PayfortIntegration
             ->setExpiryDate($expiryDate)
             ->setRedirectUrl($returnUrl)
             ->setAmount($amount);
+    }
+
+    /**
+     * @param array $fort_params
+     * @return \RSE\PayfortForLaravel\Repositories\PaymentLinkCallbackResponse
+     * @throws \RSE\PayfortForLaravel\Exceptions\PaymentFailed
+     * @throws \RSE\PayfortForLaravel\Exceptions\RequestFailed
+     */
+    public function validatePaymentLinkPostResponse(array $fort_params): PaymentLinkCallbackResponse
+    {
+        return app(ValidatePaymentLinkCallback::class)
+            ->setMerchant($this->merchant)
+            ->setMerchantExtras($this->merchant_extras)
+            ->setFortParams($fort_params)
+            ->handle();
     }
 }
