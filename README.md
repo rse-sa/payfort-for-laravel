@@ -67,7 +67,10 @@ return response()->view('payment-redirection', [
 
 Add the below code to your callback controller's method
 ```php
-$payfort = app(PayfortIntegration::class);
+use \RSE\PayfortForLaravel\Exceptions\RequestFailed;
+use \RSE\PayfortForLaravel\Exceptions\PaymentFailed;
+
+$payfort = app(\RSE\PayfortForLaravel\PayfortIntegration::class);
 
 // Validate Callback Response From Payfort
 try {
@@ -102,6 +105,8 @@ Once you identified your credentials and configurations, you are ready to use pa
 ### Tokenization request:
 To display tokenization page, in your controller method you can add the following
 ```php
+use \RSE\PayfortForLaravel\Facades\Payfort;
+
 // For Standard Merchant Page 
 $tokenization = Payfort::tokenization(
     $billAmount,
@@ -132,12 +137,15 @@ return response()->view('payment-form', [
 ### Handle Callback After Tokenization
 In your return url controller's methods (callback):
 ```php
-$tokenization = TokenizationResponse::fromArray(request()->post());
+use \RSE\PayfortForLaravel\Facades\Payfort;
+use \RSE\PayfortForLaravel\Exceptions\PaymentFailed;
+use \RSE\PayfortForLaravel\Exceptions\RequestFailed;
 
-// Check If Tokenization Was Success Or Not
-if (! $tokenization->isSuccessful()) {
-    $responseCode = $tokenization->getResponseCode();
+try{
+    $tokenization = Payfort::validateTokenizationResponse(request()->post());
+}catch (RequestFailed|PaymentFailed $requestFailed){
     // Handle Error
+    $responseCode = $requestFailed->getResponseCode();
 }
 
 /**
@@ -149,6 +157,10 @@ if (! $tokenization->isSuccessful()) {
 ### Authorization/Purchase:
 To send a purchase or authorization command, in your controller on the return of the tokenization request from payfort add this code
 ```php
+use \RSE\PayfortForLaravel\Facades\Payfort;
+use \RSE\PayfortForLaravel\Exceptions\PaymentFailed;
+use \RSE\PayfortForLaravel\Exceptions\RequestFailed;
+
 try{
     $response = Payfort::purchase(
         [],  # Request body coming from the tokenization
@@ -165,6 +177,10 @@ try{
 ```
 
 ```php
+use \RSE\PayfortForLaravel\Facades\Payfort;
+use \RSE\PayfortForLaravel\Exceptions\PaymentFailed;
+use \RSE\PayfortForLaravel\Exceptions\RequestFailed;
+
 try{
     $response = Payfort::authorize(
         [],  # Request body coming from the tokenization
@@ -201,6 +217,10 @@ $response->getPaymentOption()
 ### Process Post Response
 To process the response coming from payfort and to make sure it's valid you can use the following code snippet:
 ```php
+use \RSE\PayfortForLaravel\Facades\Payfort;
+use \RSE\PayfortForLaravel\Exceptions\PaymentFailed;
+use \RSE\PayfortForLaravel\Exceptions\RequestFailed;
+
 try{
     $tokenization = Payfort::validateTokenizationResponse(request()->post());
 }catch (RequestFailed|PaymentFailed $requestFailed){
@@ -222,6 +242,8 @@ $response->getPaymentOption()
 ### Capture
 Used only after authorization, to send a capture command use code below:
 ```php
+use \RSE\PayfortForLaravel\Facades\Payfort;
+
 Payfort::capture(
     'fort_id', # fort id for the payment transaction
     100.0 # bill amount
@@ -231,6 +253,8 @@ Payfort::capture(
 ### Void
 Used only after authorization, to send a void command use code below:
 ```php
+use \RSE\PayfortForLaravel\Facades\Payfort;
+
 Payfort::void(
     'fort_id' # fort id for the payment transaction
 );
@@ -239,6 +263,8 @@ Payfort::void(
 ### Refund
 Used only after purchase, to send a refund command use the code below:
 ```php
+use \RSE\PayfortForLaravel\Facades\Payfort;
+
 Payfort::refund(
     'fort_id', # fort id for the payment transaction
     1000 # amount to be reunded must not exceed the bill amount
@@ -248,6 +274,8 @@ Payfort::refund(
 ### Merchant extra
 Payfort support sending extra fields to the request and they will be returned back to you on the response, so to add merchant extras to any command, you do the following:
 ```php
+use \RSE\PayfortForLaravel\Facades\Payfort;
+
 Payfort::setMerchantExtra('test')->tokenization(
     1000, # Bill amount
     'redirect_url', # the recirect to url after tokenization
@@ -262,6 +290,9 @@ you can use this method `setMerchantExtra` before any command you want, and you 
 Payfort support creating invoices and send it to your customers.
 Inside your controller add the below code
 ```php
+use \RSE\PayfortForLaravel\Exceptions\PaymentFailed;
+use \RSE\PayfortForLaravel\Exceptions\RequestFailed;
+
 $payfort = app(\RSE\PayfortForLaravel\PayfortIntegration::class);
 
 try{
@@ -277,9 +308,9 @@ try{
     ->setOrderDescription('Invoice 1')
     ->setPaymentId('100001')
     ->handle();
-} catch (\RSE\PayfortForLaravel\Exceptions\RequestFailed $requestFailed){
+} catch (RequestFailed $requestFailed){
     // Handle Error
-} catch (\RSE\PayfortForLaravel\Exceptions\PaymentFailed $paymentFailed){
+} catch (PaymentFailed $paymentFailed){
     // Handle Error
 }
 
@@ -289,14 +320,16 @@ $link = $paymentLink->getPaymentLink();
 In your callback controller's method:
 
 ```php
+use \RSE\PayfortForLaravel\Exceptions\PaymentFailed;
+use \RSE\PayfortForLaravel\Exceptions\RequestFailed;
 
 $payfort = app(\RSE\PayfortForLaravel\PayfortIntegration::class);
 
 try{
     $response = $payfort->validatePaymentLinkPostResponse(request()->post());
-} catch (\RSE\PayfortForLaravel\Exceptions\RequestFailed $requestFailed){
+} catch (RequestFailed $requestFailed){
     // Handle Error
-} catch (\RSE\PayfortForLaravel\Exceptions\PaymentFailed $paymentFailed){
+} catch (PaymentFailed $paymentFailed){
     // Handle Error
 }
 
