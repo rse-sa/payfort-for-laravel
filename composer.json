@@ -1,5 +1,5 @@
 {
-    "name": "renewablesys/payfort-for-laravel",
+    "name": "rse-sa/payfort-for-laravel",
     "description": "Laravel-payfort is a package to process payments throught Payfort (amazon) payment gateway.",
     "keywords": [
         "http",
@@ -9,13 +9,13 @@
     ],
     "authors": [
         {
-            "name": "RSE",
+            "name": "Muhannad",
             "email": "malhussain@rse.sa"
         }
     ],
     "support": {
-        "issues": "https://github.com/renewablesys/payfort-for-laravel/issues",
-        "source": "https://github.com/renewablesys/payfort-for-laravel"
+        "issues": "https://github.com/rse-sa/payfort-for-laravel/issues",
+        "source": "https://github.com/rse-sa/payfort-for-laravel"
     },
     "type": "library",
     "license": "MIT",

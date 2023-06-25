@@ -23,7 +23,7 @@ Currently, it supports only Laravel 9.
 ## Installation
 You need to run this command
 ```bash
-composer require renewablesys/payfort-for-laravel
+composer require rse-sa/payfort-for-laravel
 ```
 To publish the configurations please run this command
 ```bash
