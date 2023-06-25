@@ -2,7 +2,10 @@ Payfort For Laravel
 =======================
 This repo was inspired by https://github.com/TamkeenTech/laravel-payfort and has been developed and updated.
 
-Helps you integrate Payfort into your application. currently it supports `Custom merchant page integration` refer to this [link](https://paymentservices-reference.payfort.com/docs/api/build/index.html#custom-merchant-page-integration) to understand more, also this package support using multiple merchant accounts.
+Helps you integrate Payfort into your application. currently it supports:
+1) Custom merchant page integration. [payfort-docs](https://paymentservices-reference.payfort.com/docs/api/build/index.html#custom-merchant-page-integration)
+2) Standard merchant page integration. [payfort-docs](https://paymentservices-reference.payfort.com/docs/api/build/index.html#standard-merchant-page-integration)
+3) Redirection integration. [payfort-docs](https://paymentservices-reference.payfort.com/docs/api/build/index.html#redirection)
 
 Currently, this package supports the below operation list:
 - AUTHORIZATION/PURCHASE
@@ -14,6 +17,8 @@ Currently, this package supports the below operation list:
 - CHECK_STATUS
 - REDIRECTION [NEW]
 - PAYMENT LINKS (INVOICES) [NEW]
+
+This package support using multiple merchant accounts.
 
 Please make sure to read and understand `payfort` documentation.
 https://paymentservices-reference.payfort.com/docs/api/build/index.html
