@@ -295,7 +295,7 @@ class PayfortIntegration
      * @param string      $returnUrl
      * @param string|null $merchant_reference
      * @return array
-     * @throws \Exception
+     * @noinspection PhpDocMissingThrowsInspection
      */
     public function redirectionMethod($amount, string $email, string $returnUrl, ?string $merchant_reference = null): array
     {
