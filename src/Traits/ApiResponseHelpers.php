@@ -7,6 +7,23 @@ namespace RSE\PayfortForLaravel\Traits;
  */
 trait ApiResponseHelpers
 {
+    protected ?bool $requestStatus = null;
+
+    protected function setRequestResponseCode(): void
+    {
+        $this->requestStatus = substr($this->fort_params['response_code'], 2) == '000';
+    }
+
+    public function isRequestSuccessful(): bool
+    {
+        return $this->requestStatus;
+    }
+
+    public function isRequestFailed(): bool
+    {
+        return ! $this->requestStatus;
+    }
+
     public function getResponseFortId(): ?string
     {
         return $this->fort_params['fort_id'] ?? null;

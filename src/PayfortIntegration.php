@@ -225,7 +225,7 @@ class PayfortIntegration
      * @param float  $amount
      * @param string $email
      * @param string $redirect_url
-     * @return \RSE\PayfortForLaravel\Services\AuthorizePurchaseService
+     * @return \RSE\PayfortForLaravel\Repositories\PurchaseResponse
      * @throws \RSE\PayfortForLaravel\Exceptions\PaymentFailed
      * @throws \RSE\PayfortForLaravel\Exceptions\RequestFailed
      */
@@ -267,7 +267,6 @@ class PayfortIntegration
     /**
      * @param array $fort_params
      * @return \RSE\PayfortForLaravel\Repositories\PurchaseResponse
-     * @throws \RSE\PayfortForLaravel\Exceptions\PaymentFailed
      * @throws \RSE\PayfortForLaravel\Exceptions\RequestFailed
      */
     public function validatePostResponse(array $fort_params): PurchaseResponse

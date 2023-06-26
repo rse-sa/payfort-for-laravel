@@ -77,8 +77,12 @@ try {
     $purchase = $payfort->validatePostResponse($post);
 } catch (RequestFailed $requestFailed) {
     // Handle Error
-} catch (PaymentFailed $paymentFailed) {
-    // Handle Error
+}
+
+if($purchase->isPurchaseSuccessful()){
+    // Handle Success Payment
+}else{
+    // Handle Failure Payment
 }
 
 // Fetch Transaction Status From Payfort
@@ -223,9 +227,14 @@ use \RSE\PayfortForLaravel\Exceptions\RequestFailed;
 
 try{
     $response = Payfort::validatePostResponse(request()->post());
-}catch (RequestFailed|PaymentFailed $requestFailed){
+}catch (RequestFailed $requestFailed){
     // Handle Error
 }
+
+if($response->isPurchaseSuccessful()){
+    // Handle Success
+}
+
 ```
 it will throw exception `\RSE\PayfortForLaravel\Exceptions\PaymentFailed`, if the response is not valid.
 
@@ -338,8 +347,6 @@ $payfort = app(\RSE\PayfortForLaravel\PayfortIntegration::class);
 try{
     $response = $payfort->validatePaymentLinkPostResponse(request()->post());
 } catch (RequestFailed $requestFailed){
-    // Handle Error
-} catch (PaymentFailed $paymentFailed){
     // Handle Error
 }
 

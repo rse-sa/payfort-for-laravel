@@ -15,14 +15,28 @@ class PurchaseResponse
         $this->payload = $data;
     }
 
-    public static function fromArray(array $data): self
+    /**
+     * @param array $data
+     * @return static
+     */
+    public static function fromArray(array $data)
     {
         return (new static($data));
+    }
+
+    public function isRequestSuccessful(): bool
+    {
+        return $this->getResponseMessageCode() == '000';
     }
 
     public function isPurchaseSuccessful(): bool
     {
         return $this->payload['transaction_status'] == '14';
+    }
+
+    public function isAuthorizationSuccessful(): bool
+    {
+        return $this->payload['transaction_status'] == '02';
     }
 
     public function getMerchantReference(): string

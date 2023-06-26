@@ -5,16 +5,14 @@ namespace RSE\PayfortForLaravel\Services;
 use RSE\PayfortForLaravel\Events\PayfortMessageLog;
 use RSE\PayfortForLaravel\Exceptions\PaymentFailed;
 use RSE\PayfortForLaravel\Repositories\Payfort;
-use RSE\PayfortForLaravel\Repositories\PurchaseResponse;
 use RSE\PayfortForLaravel\Repositories\TokenizationResponse;
-use RSE\PayfortForLaravel\Traits\FortParams;
-use RSE\PayfortForLaravel\Traits\PaymentResponseHelpers;
 use RSE\PayfortForLaravel\Traits\ApiResponseHelpers;
+use RSE\PayfortForLaravel\Traits\FortParams;
 use RSE\PayfortForLaravel\Traits\Signature;
 
 class ValidateTokenizationResponse extends Payfort
 {
-    use FortParams, ApiResponseHelpers, Signature, PaymentResponseHelpers;
+    use FortParams, ApiResponseHelpers, Signature;
 
     protected $fort_params = [];
 
@@ -29,7 +27,7 @@ class ValidateTokenizationResponse extends Payfort
 
         $this->validateSignature();
 
-        $this->validatePaymentResponseCode();
+        $this->setRequestResponseCode();
 
         $this->response = $this->fort_params;
 

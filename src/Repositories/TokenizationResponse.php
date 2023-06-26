@@ -15,7 +15,11 @@ class TokenizationResponse
         $this->payload = $data;
     }
 
-    public static function fromArray(array $data): self
+    /**
+     * @param array $data
+     * @return static
+     */
+    public static function fromArray(array $data)
     {
         return (new static($data));
     }

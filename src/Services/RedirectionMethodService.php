@@ -2,11 +2,7 @@
 
 namespace RSE\PayfortForLaravel\Services;
 
-use RSE\PayfortForLaravel\Exceptions\RequestFailed;
 use RSE\PayfortForLaravel\Repositories\Payfort;
-use RSE\PayfortForLaravel\Traits\FortParams;
-use RSE\PayfortForLaravel\Traits\PaymentResponseHelpers;
-use RSE\PayfortForLaravel\Traits\ApiResponseHelpers;
 
 class RedirectionMethodService extends Payfort
 {

@@ -4,16 +4,14 @@ namespace RSE\PayfortForLaravel\Services;
 
 use Illuminate\Support\Carbon;
 use RSE\PayfortForLaravel\Exceptions\RequestFailed;
-use RSE\PayfortForLaravel\Repositories\CaptureResponse;
 use RSE\PayfortForLaravel\Repositories\Payfort;
 use RSE\PayfortForLaravel\Repositories\PaymentLinkCreatedResponse;
-use RSE\PayfortForLaravel\Traits\FortParams;
-use RSE\PayfortForLaravel\Traits\PaymentResponseHelpers;
 use RSE\PayfortForLaravel\Traits\ApiResponseHelpers;
+use RSE\PayfortForLaravel\Traits\FortParams;
 
 class PaymentLinkService extends Payfort
 {
-    use ApiResponseHelpers, FortParams, PaymentResponseHelpers;
+    use ApiResponseHelpers, FortParams;
 
     protected Carbon $expiry_date;
     protected array $notification_type = ['EMAIL'];
@@ -65,7 +63,7 @@ class PaymentLinkService extends Payfort
             throw (new RequestFailed($this->getResponseCode() . " - " . $this->getResponseMessage()))->setResponse($this->response);
         }
 
-        $this->validatePaymentResponseCode();
+        $this->setRequestResponseCode();
 
         return PaymentLinkCreatedResponse::fromArray($this->response);
     }

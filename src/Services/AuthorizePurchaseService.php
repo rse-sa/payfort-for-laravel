@@ -6,14 +6,13 @@ use Illuminate\Support\Facades\Validator;
 use RSE\PayfortForLaravel\Events\PayfortMessageLog;
 use RSE\PayfortForLaravel\Repositories\Payfort;
 use RSE\PayfortForLaravel\Repositories\PurchaseResponse;
-use RSE\PayfortForLaravel\Traits\FortParams;
-use RSE\PayfortForLaravel\Traits\PaymentResponseHelpers;
 use RSE\PayfortForLaravel\Traits\ApiResponseHelpers;
+use RSE\PayfortForLaravel\Traits\FortParams;
 use RSE\PayfortForLaravel\Traits\Signature;
 
 class AuthorizePurchaseService extends Payfort
 {
-    use FortParams, ApiResponseHelpers, Signature, PaymentResponseHelpers;
+    use FortParams, ApiResponseHelpers, Signature;
 
     protected $fort_params = [];
 
@@ -42,7 +41,7 @@ class AuthorizePurchaseService extends Payfort
 
         $this->validateSignature();
 
-        $this->validatePaymentResponseCode();
+        $this->setRequestResponseCode();
 
         $request = [
             'command' => $this->command,
@@ -82,7 +81,7 @@ class AuthorizePurchaseService extends Payfort
         $response = PurchaseResponse::fromArray($this->response);
 
         if (! $response->should3DsRedirect()) {
-            $this->validatePaymentResponseCode();
+            $this->setRequestResponseCode();
         }
 
         return $response;

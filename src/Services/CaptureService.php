@@ -5,13 +5,12 @@ namespace RSE\PayfortForLaravel\Services;
 use RSE\PayfortForLaravel\Exceptions\RequestFailed;
 use RSE\PayfortForLaravel\Repositories\CaptureResponse;
 use RSE\PayfortForLaravel\Repositories\Payfort;
-use RSE\PayfortForLaravel\Traits\FortParams;
-use RSE\PayfortForLaravel\Traits\PaymentResponseHelpers;
 use RSE\PayfortForLaravel\Traits\ApiResponseHelpers;
+use RSE\PayfortForLaravel\Traits\FortParams;
 
 class CaptureService extends Payfort
 {
-    use ApiResponseHelpers, FortParams, PaymentResponseHelpers;
+    use ApiResponseHelpers, FortParams;
 
     /**
      * @return \RSE\PayfortForLaravel\Repositories\CaptureResponse
@@ -45,7 +44,7 @@ class CaptureService extends Payfort
             throw (new RequestFailed($this->getResponseCode() . " - " . $this->getResponseMessage()))->setResponse($this->response);
         }
 
-        $this->validatePaymentResponseCode();
+        $this->setRequestResponseCode();
 
         return CaptureResponse::fromArray($this->response);
     }

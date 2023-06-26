@@ -15,7 +15,11 @@ class StatusResponse
         $this->payload = $data;
     }
 
-    public static function fromArray(array $data): self
+    /**
+     * @param array $data
+     * @return static
+     */
+    public static function fromArray(array $data)
     {
         return (new static($data));
     }
@@ -23,6 +27,11 @@ class StatusResponse
     public function isPurchaseSuccessful(): bool
     {
         return $this->payload['transaction_status'] == '14';
+    }
+
+    public function isAuthorizationSuccessful(): bool
+    {
+        return $this->payload['transaction_status'] == '02';
     }
 
     public function getTransactionStatus(): string
