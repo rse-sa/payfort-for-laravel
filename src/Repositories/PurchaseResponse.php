@@ -31,12 +31,12 @@ class PurchaseResponse
 
     public function isPurchaseSuccessful(): bool
     {
-        return $this->payload['transaction_status'] == '14';
+        return ($this->payload['transaction_status'] ?? $this->payload['status']) == '14';
     }
 
     public function isAuthorizationSuccessful(): bool
     {
-        return $this->payload['transaction_status'] == '02';
+        return ($this->payload['transaction_status'] ?? $this->payload['status']) == '02';
     }
 
     public function getMerchantReference(): string
@@ -79,14 +79,14 @@ class PurchaseResponse
         return $this->payload['eci'];
     }
 
-    public function getFortId(): string
+    public function getFortId(): ?string
     {
-        return $this->payload['fort_id'];
+        return $this->payload['fort_id'] ?? null;
     }
 
-    public function getAuthorizationCode(): string
+    public function getAuthorizationCode(): ?string
     {
-        return $this->payload['authorization_code'];
+        return $this->payload['authorization_code'] ?? null;
     }
 
     public function getCustomerEmail(): string
