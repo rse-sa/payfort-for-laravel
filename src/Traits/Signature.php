@@ -2,7 +2,6 @@
 
 namespace RSE\PayfortForLaravel\Traits;
 
-use RSE\PayfortForLaravel\Exceptions\PaymentFailed;
 use RSE\PayfortForLaravel\Exceptions\RequestFailed;
 
 /**
@@ -16,10 +15,13 @@ trait Signature
     protected function validateSignature($request_type = 'response'): self
     {
         $responseSignature = $this->fort_params['signature'];
+
         $calculatedSignature = $this->calculateSignature($this->fort_params, $request_type);
 
         if ($responseSignature !== $calculatedSignature) {
-            $msg = "Invalid signature.";
+            $msg = 'Invalid signature.';
+
+            logger()->warning("Payment Invalid Signautre (Response : $responseSignature) (Calculated : $calculatedSignature)");
 
             throw (new RequestFailed($msg))->setResponse($this->fort_params);
         }

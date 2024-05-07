@@ -35,7 +35,7 @@ class RedirectionMethodService extends Payfort
 
     public function getRedirectionForm($gatewayUrl, $postData): string
     {
-        $form = '<form name="payfort_payment_form" id="payfort_payment_form" method="post" action="' . $gatewayUrl . '">';
+        $form = '<div style="text-align: center;padding:5rem;direction: ltr"><form name="payfort_payment_form" id="payfort_payment_form" method="post" action="' . $gatewayUrl . '">';
 
         foreach ($postData as $k => $v) {
             $form .= '<input type="hidden" name="' . htmlentities($k) . '" value="' . htmlentities($v) . '">';
@@ -43,7 +43,8 @@ class RedirectionMethodService extends Payfort
 
         $form .= '<input type="submit" value="You will be redirected to the payment page ..">';
 
-        $form .= '</form>';
+        $form .= '</form></div>';
+
 
         //$form .= 'You will be redirected to the payment page ..';
 
